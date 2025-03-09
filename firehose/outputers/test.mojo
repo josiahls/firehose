@@ -7,24 +7,156 @@ from firehose.outputers.common import LoggerOutputer
 
 @value
 struct TestLoggerOutputer(LoggerOutputer):
+    """
+    TestLoggerOutputer: In-memory log message collector for testing.
+    
+    This outputer stores log messages in memory rather than outputting them
+    to an external destination. This makes it ideal for use in unit tests
+    where you need to verify that your code is logging the correct messages.
+    
+    Example:
+    ```
+    # Set up a logger with a test outputer
+    var logger = Logger.get_default_logger("test_logger")
+    var test_outputer = TestLoggerOutputer("test", LOG_LEVELS['DEBUG'])
+    logger.add_output(test_outputer)
+    
+    # Your code that should log messages
+    some_function_that_logs(logger)
+    
+    # Verify the logged messages
+    var messages = test_outputer.get_messages()
+    assert len(messages) == 2
+    assert "Expected message" in messages[0]
+    
+    # Clear for next test
+    test_outputer.clear_messages()
+    ```
+    
+    This enables testing that your code logs appropriate messages
+    without relying on console output or other external systems.
+    """
+    
     var name: String
+    """
+    Name of the outputer instance, useful for debugging or management.
+    """
+    
     var level: Int
+    """
+    Level associated with this outputer, though not used in this implementation.
+    
+    Standard level values:
+    - 0: TRACE
+    - 10: DEBUG
+    - 20: INFO
+    - 30: WARNING
+    - 40: ERROR
+    - 50: CRITICAL
+    """
+    
     var messages: List[String]
+    """
+    List of captured log messages.
+    
+    This list stores all messages received by this outputer since creation
+    or the last call to clear_messages(). The messages are stored in the
+    order they were received.
+    """
+    
     var max_messages: Int
+    """
+    Maximum number of messages to store.
+    
+    This setting prevents memory issues if an excessive number of messages
+    are logged. If the number of messages exceeds this limit, the oldest
+    messages will be dropped.
+    
+    Default: 1000 messages
+    """
 
     fn __init__(out self, name: String, level: Int):
+        """
+        Initialize a new TestLoggerOutputer.
+        
+        Args:
+            name: Identifier for this outputer instance
+            level: Level value (unused in this implementation)
+            
+        Example:
+        ```
+        var test_outputer = TestLoggerOutputer("test_capture", LOG_LEVELS['DEBUG'])
+        ```
+        
+        The outputer starts with an empty message list and a default
+        maximum message count of 1000.
+        """
         self.name = name
         self.level = level
         self.messages = List[String]()
         self.max_messages = 1000
+
     fn output(mut self, message: String):
+        """
+        Capture a log message in the internal message list.
+        
+        Args:
+            message: The formatted message to capture
+            
+        This method appends the message to the internal message list.
+        The 'mut' designation is required because this method modifies
+        the outputer's state.
+        
+        If the number of stored messages exceeds max_messages, the oldest
+        message will be removed to make room for the new one.
+        
+        Note that there's no return value - the message is stored for
+        later retrieval via get_messages().
+        """
         self.messages.append(message)
         if len(self.messages) > self.max_messages:
-            print('TestLoggerOutputer: max messages reached (' + String(self.max_messages) + '), clearing messages')
-            _ = self.messages.pop(0)
+            # Remove oldest message if we exceed max capacity
+            self.messages = self.messages[1:]
 
     fn get_messages(self) -> List[String]:
+        """
+        Retrieve the list of captured messages.
+        
+        Returns:
+            List[String]: A list of all messages captured since creation
+                        or the last call to clear_messages()
+                        
+        Example:
+        ```
+        var messages = test_outputer.get_messages()
+        for i in range(len(messages)):
+            print("Message", i, ":", messages[i])
+        ```
+        
+        This method doesn't clear the message list - use clear_messages()
+        for that purpose.
+        """
         return self.messages
 
     fn clear_messages(mut self):
+        """
+        Clear all captured messages from the internal list.
+        
+        This method resets the message list to empty, allowing for a fresh
+        start in a new test case.
+        
+        Example:
+        ```
+        # After verifying messages from first test
+        test_outputer.clear_messages()
+        
+        # Run second test
+        another_function_that_logs(logger)
+        
+        # Verify new messages without interference from first test
+        var new_messages = test_outputer.get_messages()
+        ```
+        
+        This method requires mut access because it modifies the outputer's state.
+        """
         self.messages = List[String]() 
