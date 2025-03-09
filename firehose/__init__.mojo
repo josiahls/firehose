@@ -289,3 +289,28 @@ for level_name in LOG_LEVELS_KEYS:
     print(" -", level_name, "=", LOG_LEVELS[level_name])
 ```
 """
+
+
+fn _init_log_levels_numeric_to_names() -> Dict[Int, String]:
+    """
+    Initialize a dictionary mapping numeric log levels to their names.
+    
+    Returns:
+        Dict[Int, String]: A dictionary mapping numeric log levels to their names
+    
+    This provides a reverse mapping from numeric log levels to their corresponding
+    names, useful for converting numeric levels to their textual representations.
+    """
+    d = Dict[Int, String]()
+    for item in LOG_LEVELS.items():
+        d[item[].value] = item[].key
+    return d
+
+
+alias LOG_LEVEL_NAMES_FROM_NUMERIC = _init_log_levels_numeric_to_names()
+"""
+LOG_LEVEL_NAMES_FROM_NUMERIC: Dictionary mapping numeric log levels to their names.
+
+This provides a reverse mapping from numeric log levels to their corresponding
+
+"""

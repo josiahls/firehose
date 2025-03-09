@@ -1,4 +1,5 @@
 # Native Mojo Modules
+from memory import ArcPointer
 # Third Party Mojo Modules
 # First Party Modules
 from firehose.common import Record

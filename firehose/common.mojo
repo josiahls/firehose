@@ -1,3 +1,8 @@
+# Native Mojo Modules
+# Third Party Mojo Modules
+# First Party Modules
+from builtin._location import __call_location, _SourceLocation
+
 @value
 struct Record:
     """
@@ -31,4 +36,8 @@ struct Record:
     var logger_name: String
     """
     The name of the logger that created this record.
+    """
+    var source_location: _SourceLocation
+    """
+    The source location of the log message.
     """

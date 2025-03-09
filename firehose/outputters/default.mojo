@@ -24,42 +24,6 @@ struct DefaultLoggerOutputer(LoggerOutputer):
     For production applications, you may want to create custom outputters
     that write to files, network services, or other destinations.
     """
-    
-    var name: String
-    """
-    Name of the outputter instance, useful for debugging or management.
-    """
-    
-    var level: Int
-    """
-    Level associated with this outputter, though not used in the default implementation.
-    In custom implementations, this could be used to determine output destinations
-    based on message level.
-    
-    Standard level values:
-    - 0: TRACE
-    - 10: DEBUG
-    - 20: INFO
-    - 30: WARNING
-    - 40: ERROR
-    - 50: CRITICAL
-    """
-
-    fn __init__(out self, name: String, level: Int):
-        """
-        Initialize a new DefaultLoggerOutputer.
-        
-        Args:
-            name: Identifier for this outputter instance.
-            level: Level value (unused in the default implementation).
-
-        Example:
-        ```
-        var outputter = DefaultLoggerOutputer("console", LOG_LEVELS['INFO'])
-        ```
-        """
-        self.name = name
-        self.level = level
 
     fn output(mut self, record: Record):
         """

@@ -2,6 +2,7 @@
 from collections.dict import Dict
 from utils import Variant
 from memory import ArcPointer
+from builtin._location import __call_location
 # Third Party Mojo Modules
 # First Party Modules
 from firehose import FormatterVariant, FilterVariant, OutputerVariant, LOG_LEVELS, LOG_LEVELS_NUMERIC, Record
@@ -129,6 +130,12 @@ struct Logger:
               "after adding it to the logger, use add_formatter with an ArcPointer instead.")
         self.formatters.append(ArcPointer[FormatterVariant](formatter^))
 
+    fn add_formatter_copy(mut self, owned formatter: FormatterVariant):
+        """
+        Add a formatter to the logger by taking ownership. This will make a copy of the formatter.
+        """
+        self.formatters.append(ArcPointer[FormatterVariant](formatter^))
+
     fn add_formatter(mut self, owned formatter: ArcPointer[FormatterVariant]):
         """
         Add a formatter to the logger using an ArcPointer.
@@ -156,6 +163,12 @@ struct Logger:
               "after adding it to the logger, use add_filter with an ArcPointer instead.")
         self.filterers.append(ArcPointer[FilterVariant](filter^))
 
+    fn add_filter_copy(mut self, owned filter: FilterVariant):
+        """
+        Add a filter to the logger by taking ownership. This will make a copy of the filter.
+        """
+        self.filterers.append(ArcPointer[FilterVariant](filter^))
+
     fn add_filter(mut self, owned filter: ArcPointer[FilterVariant]):
         """
         Add a filter to the logger using an ArcPointer.
@@ -181,6 +194,12 @@ struct Logger:
         """
         print("Warning: Creating copy of outputter. If you need to access this outputter " +
               "after adding it to the logger, use add_outputter with an ArcPointer instead.")
+        self.outputters.append(ArcPointer[OutputerVariant](output^))
+
+    fn add_outputter_copy(mut self, owned output: OutputerVariant):
+        """
+        Add an outputter to the logger by taking ownership. This will make a copy of the outputter.
+        """
         self.outputters.append(ArcPointer[OutputerVariant](output^))
 
     fn add_outputter(mut self, owned output: ArcPointer[OutputerVariant]):
@@ -245,29 +264,35 @@ struct Logger:
         """
         Make a record for a message.
         """
-        return Record(message, message, self.level, log_level, self.name)
+        return Record(message, message, self.level, log_level, self.name, __call_location[inline_count=0]())
 
+    @always_inline('nodebug')
     fn trace(mut self, message: String):
-        var record = Record(message, message, self.level, LOG_LEVELS.get('TRACE',0), self.name)
+        var record = Record(message, message, self.level, LOG_LEVELS.get('TRACE',0), self.name, __call_location[inline_count=1]())
         _ = self.run_pipeline(record)
 
+    @always_inline('nodebug')
     fn debug(mut self, message: String):
-        var record = Record(message, message, self.level, LOG_LEVELS.get('DEBUG',0), self.name)
+        var record = Record(message, message, self.level, LOG_LEVELS.get('DEBUG',0), self.name, __call_location[inline_count=1]())
         _ = self.run_pipeline(record)
 
+    @always_inline('nodebug')
     fn info(mut self, message: String):
-        var record = Record(message, message, self.level, LOG_LEVELS.get('INFO',0), self.name)
+        var record = Record(message, message, self.level, LOG_LEVELS.get('INFO',0), self.name, __call_location[inline_count=1]())
         _ = self.run_pipeline(record)
 
+    @always_inline('nodebug')
     fn warning(mut self, message: String):
-        var record = Record(message, message, self.level, LOG_LEVELS.get('WARNING',0), self.name)
+        var record = Record(message, message, self.level, LOG_LEVELS.get('WARNING',0), self.name, __call_location[inline_count=1]())
         _ = self.run_pipeline(record)
 
+    @always_inline('nodebug')
     fn error(mut self, message: String):
-        var record = Record(message, message, self.level, LOG_LEVELS.get('ERROR',0), self.name)
+        var record = Record(message, message, self.level, LOG_LEVELS.get('ERROR',0), self.name, __call_location[inline_count=1]())
         _ = self.run_pipeline(record)
 
+    @always_inline('nodebug')
     fn critical(mut self, message: String):
-        var record = Record(message, message, self.level, LOG_LEVELS.get('CRITICAL',0), self.name)
+        var record = Record(message, message, self.level, LOG_LEVELS.get('CRITICAL',0), self.name, __call_location[inline_count=1]())
         _ = self.run_pipeline(record)
 
