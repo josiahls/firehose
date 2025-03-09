@@ -11,56 +11,38 @@ struct TestLoggerOutputer(LoggerOutputer):
     """
     TestLoggerOutputer: In-memory log message collector for testing.
     
-    This outputer stores log messages in memory rather than outputting them
+    This outputter stores log messages in memory rather than outputting them
     to an external destination. This makes it ideal for use in unit tests
     where you need to verify that your code is logging the correct messages.
     
     Example:
     ```
-    # Set up a logger with a test outputer
+    # Set up a logger with a test outputter
     var logger = Logger.get_default_logger("test_logger")
-    var test_outputer = TestLoggerOutputer("test", LOG_LEVELS['DEBUG'])
-    logger.add_output(test_outputer)
+    var test_outputter = TestLoggerOutputer("test", LOG_LEVELS['DEBUG'])
+    logger.add_output(test_outputter)
     
     # Your code that should log messages
     some_function_that_logs(logger)
     
     # Verify the logged messages
-    var messages = test_outputer.get_messages()
+    var messages = test_outputter.get_messages()
     assert len(messages) == 2
     assert "Expected message" in messages[0]
     
     # Clear for next test
-    test_outputer.clear_messages()
+    test_outputter.clear_messages()
     ```
     
     This enables testing that your code logs appropriate messages
     without relying on console output or other external systems.
     """
     
-    var name: String
-    """
-    Name of the outputer instance, useful for debugging or management.
-    """
-    
-    var level: Int
-    """
-    Level associated with this outputer, though not used in this implementation.
-    
-    Standard level values:
-    - 0: TRACE
-    - 10: DEBUG
-    - 20: INFO
-    - 30: WARNING
-    - 40: ERROR
-    - 50: CRITICAL
-    """
-    
     var messages: List[String]
     """
     List of captured log messages.
     
-    This list stores all messages received by this outputer since creation
+    This list stores all messages received by this outputter since creation
     or the last call to clear_messages(). The messages are stored in the
     order they were received.
     """
@@ -76,24 +58,18 @@ struct TestLoggerOutputer(LoggerOutputer):
     Default: 1000 messages
     """
 
-    fn __init__(out self, name: String, level: Int):
+    fn __init__(out self):
         """
         Initialize a new TestLoggerOutputer.
         
-        Args:
-            name: Identifier for this outputer instance
-            level: Level value (unused in this implementation)
-            
         Example:
         ```
-        var test_outputer = TestLoggerOutputer("test_capture", LOG_LEVELS['DEBUG'])
+        var test_outputter = TestLoggerOutputer()
         ```
         
-        The outputer starts with an empty message list and a default
+        The outputter starts with an empty message list and a default
         maximum message count of 1000.
         """
-        self.name = name
-        self.level = level
         self.messages = List[String]()
         self.max_messages = 1000
 
@@ -106,7 +82,7 @@ struct TestLoggerOutputer(LoggerOutputer):
             
         This method appends the message to the internal message list.
         The 'mut' designation is required because this method modifies
-        the outputer's state.
+        the outputter's state.
         
         If the number of stored messages exceeds max_messages, the oldest
         message will be removed to make room for the new one.
@@ -129,7 +105,7 @@ struct TestLoggerOutputer(LoggerOutputer):
                         
         Example:
         ```
-        var messages = test_outputer.get_messages()
+        var messages = test_outputter.get_messages()
         for i in range(len(messages)):
             print("Message", i, ":", messages[i])
         ```
@@ -149,15 +125,15 @@ struct TestLoggerOutputer(LoggerOutputer):
         Example:
         ```
         # After verifying messages from first test
-        test_outputer.clear_messages()
+        test_outputter.clear_messages()
         
         # Run second test
         another_function_that_logs(logger)
         
         # Verify new messages without interference from first test
-        var new_messages = test_outputer.get_messages()
+        var new_messages = test_outputter.get_messages()
         ```
         
-        This method requires mut access because it modifies the outputer's state.
+        This method requires mut access because it modifies the outputter's state.
         """
         self.messages = List[String]() 

@@ -32,11 +32,6 @@ struct DefaultLoggerFilter(LoggerFilter):
     ```
     """
     
-    var name: String
-    """
-    Name of the filter instance, useful for debugging or management.
-    """
-    
     var level: Int
     """
     The threshold level for this filter. Messages with a level below this
@@ -51,12 +46,11 @@ struct DefaultLoggerFilter(LoggerFilter):
     - 50: CRITICAL
     """
 
-    fn __init__(out self, name: String, level: Int):
+    fn __init__(out self, level: String='INFO'):
         """
         Initialize a new DefaultLoggerFilter.
         
         Args:
-            name: Identifier for this filter instance.
             level: Threshold level - messages below this level will be filtered out.
 
         Example:
@@ -65,8 +59,7 @@ struct DefaultLoggerFilter(LoggerFilter):
         var filter = DefaultLoggerFilter("prod_filter", LOG_LEVELS['WARNING'])
         ```
         """
-        self.name = name
-        self.level = level
+        self.level = LOG_LEVELS.get(level, -1)
 
     fn filter(self, record: Record) -> Bool:
         """

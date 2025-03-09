@@ -25,46 +25,24 @@ struct DefaultLoggerFormatter(LoggerFormatter):
     that add context like timestamps, source information, or log levels.
     """
     
-    var name: String
-    """
-    Name of the formatter instance, useful for debugging or management.
-    """
-    
-    var level: Int
-    """
-    Level associated with this formatter, though not used in the default implementation.
-    In custom implementations, this could be used to format messages differently
-    based on their level.
-    
-    Standard level values:
-    - 0: TRACE
-    - 10: DEBUG
-    - 20: INFO
-    - 30: WARNING
-    - 40: ERROR
-    - 50: CRITICAL
-    """
     var format_string: String
     """
     The format string to use for the log message.
     """
 
-    fn __init__(out self, name: String, level: Int):
+    fn __init__(out self, format_string: String='%(asctime)s - %(name)s - %(levelname)s - %(message)s'):
         """
         Initialize a new DefaultLoggerFormatter.
         
         Args:
-            name: Identifier for this formatter instance.
-            level: Level value (unused in the default implementation).
+            format_string: The format string to use for the log message.
 
         Example:
         ```
-        var formatter = DefaultLoggerFormatter("simple_formatter", LOG_LEVELS['INFO'])
+        var formatter = DefaultLoggerFormatter()
         ```
         """
-        self.name = name
-        self.level = level
-        self.format_string = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+        self.format_string = format_string
 
     fn format(self, record: Record) -> Record:
         """

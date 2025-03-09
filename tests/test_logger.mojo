@@ -45,14 +45,14 @@ fn test_process_data() raises:
     Test the process_data function and verify its logging behavior.
     
     This test demonstrates:
-    1. Setting up a logger with a test outputer
+    1. Setting up a logger with a test outputter
     2. Calling a function that logs messages
     3. Verifying the logged messages content
     """
-    # Set up the logger with a test outputer
+    # Set up the logger with a test outputter
     var logger = Logger.get_default_logger("test", "DEBUG")
     logger.add_output(TestLoggerOutputer("test_output", LOG_LEVELS['DEBUG']))
-    test_outputer = logger.outputs[-1]
+    test_outputter = logger.outputs[-1]
     
     # Call the function with positive input
     var result = process_data(25, logger)
@@ -61,14 +61,14 @@ fn test_process_data() raises:
     debug_assert(result == 50)
     
     # Verify the log messages
-    var messages = test_outputer[][TestLoggerOutputer].get_messages()
+    var messages = test_outputter[][TestLoggerOutputer].get_messages()
     debug_assert(len(messages) != 0)
     # Check message contents (simplified to avoid string operations that might raise)
     print("First message: ", messages[0])
     print("Second message: ", messages[1])
     
     # Clear messages for the next test
-    test_outputer[][TestLoggerOutputer].clear_messages()
+    test_outputter[][TestLoggerOutputer].clear_messages()
     
     # Test with a value that triggers the warning
     result = process_data(-10, logger)
@@ -77,7 +77,7 @@ fn test_process_data() raises:
     debug_assert(result == 0)
     
     # Verify the log messages - should have a warning
-    messages = test_outputer[][TestLoggerOutputer].get_messages()
+    messages = test_outputter[][TestLoggerOutputer].get_messages()
     debug_assert(len(messages) == 3)
     print("First message: ", messages[0])
     print("Second message: ", messages[1])

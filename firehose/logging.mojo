@@ -50,7 +50,7 @@ struct Logger:
     var outputs: List[ArcPointer[OutputerVariant]]
     """
     List of outputters that receive formatted messages for final delivery.
-    Each outputer is stored as an ArcPointer to maintain shared ownership.
+    Each outputter is stored as an ArcPointer to maintain shared ownership.
     """
 
     @staticmethod
@@ -65,7 +65,7 @@ struct Logger:
         Returns:
             Logger: A configured logger with default components
             
-        This creates a logger with the standard filter, formatter and outputer.
+        This creates a logger with the standard filter, formatter and outputter.
         """
         try:
             var logger = Logger(name, LOG_LEVELS[level])
@@ -101,6 +101,18 @@ struct Logger:
         self.filters = List[ArcPointer[FilterVariant]]()
         self.outputs = List[ArcPointer[OutputerVariant]]()
 
+    
+    fn __init__(out self, name: String, level: String='INFO'):
+        """
+        Initialize a new Logger instance.
+        """
+        self.name = name
+        self.level = LOG_LEVELS.get(level, -1) # Force a debug assert
+        debug_assert(self.level in LOG_LEVELS_NUMERIC, 'Invalid log level: ' + String(self.level))
+        self.formatters = List[ArcPointer[FormatterVariant]]()
+        self.filters = List[ArcPointer[FilterVariant]]()
+        self.outputs = List[ArcPointer[OutputerVariant]]()
+
 
     fn add_formatter(mut self, owned formatter: FormatterVariant):
         """
@@ -129,7 +141,7 @@ struct Logger:
         """
         self.formatters.append(formatter^)
 
-    fn add_filter_owned(mut self, owned filter: FilterVariant):
+    fn add_filter(mut self, owned filter: FilterVariant):
         """
         Add a filter to the logger by taking ownership.
         
@@ -158,27 +170,27 @@ struct Logger:
 
     fn add_output(mut self, owned output: OutputerVariant):
         """
-        Add an outputer to the logger by taking ownership.
+        Add an outputter to the logger by taking ownership.
         
         Args:
-            output: The outputer to add
+            output: The outputter to add
             
-        WARNING: This method creates a copy of the outputer. If you need to 
-        access the outputer after adding it to the logger, use add_output
+        WARNING: This method creates a copy of the outputter. If you need to 
+        access the outputter after adding it to the logger, use add_output
         with an ArcPointer instead.
         """
-        print("Warning: Creating copy of outputer. If you need to access this outputer " +
+        print("Warning: Creating copy of outputter. If you need to access this outputter " +
               "after adding it to the logger, use add_output with an ArcPointer instead.")
         self.outputs.append(ArcPointer[OutputerVariant](output^))
 
     fn add_output(mut self, owned output: ArcPointer[OutputerVariant]):
         """
-        Add an outputer to the logger using an ArcPointer.
+        Add an outputter to the logger using an ArcPointer.
         
         Args:
-            output: ArcPointer to the outputer to add.
+            output: ArcPointer to the outputter to add.
             
-        This method maintains shared ownership of the outputer, allowing
+        This method maintains shared ownership of the outputter, allowing
         you to still access it after adding it to the logger.
         """
         self.outputs.append(output^)
@@ -224,8 +236,8 @@ struct Logger:
         # Apply outputs
         var final_record = current_record
         for i in range(len(self.outputs)):
-            var outputer = self.outputs[i]
-            self._apply_output(outputer, final_record)
+            var outputter = self.outputs[i]
+            self._apply_output(outputter, final_record)
 
         return True
 

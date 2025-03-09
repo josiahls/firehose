@@ -32,17 +32,17 @@ For testing, use the TestLoggerOutputer to capture log messages:
 from firehose.logging import Logger
 from firehose import LOG_LEVELS, TestLoggerOutputer
 
-# Create a logger and add a test outputer
+# Create a logger and add a test outputter
 var logger = Logger.get_default_logger("test_logger")
-var test_outputer = TestLoggerOutputer("test_output", LOG_LEVELS['INFO'])
-logger.add_output(test_outputer)
+var test_outputter = TestLoggerOutputer("test_output", LOG_LEVELS['INFO'])
+logger.add_output(test_outputter)
 
 # Log some messages
 logger.info("Test message 1")
 logger.info("Test message 2")
 
 # Retrieve and verify the captured messages
-var messages = test_outputer.get_messages()
+var messages = test_outputter.get_messages()
 assert len(messages) == 2
 ```
 
@@ -54,7 +54,7 @@ API Overview:
 - DefaultLoggerFilter: Standard level-based filter implementation
 - DefaultLoggerFormatter: Standard message formatter implementation
 - DefaultLoggerOutputer: Standard console output implementation
-- TestLoggerOutputer: Message-capturing outputer for testing
+- TestLoggerOutputer: Message-capturing outputter for testing
 """
 
 # Native Mojo Modules
@@ -82,7 +82,7 @@ from firehose.outputters.test import TestLoggerOutputer
 Type aliases for the variant types used in the logging system.
 
 These variants allow for runtime polymorphism with the different filter,
-formatter, and outputer implementations.
+formatter, and outputter implementations.
 
 Usage:
 ```
@@ -90,7 +90,7 @@ Usage:
 var filter = DefaultLoggerFilter("my_filter", LOG_LEVELS['INFO'])
 var filter_variant = FilterVariant(filter)
 
-# Create and use the test outputer for capturing logs
+# Create and use the test outputter for capturing logs
 var test_output = TestLoggerOutputer("test", LOG_LEVELS['DEBUG'])
 var output_variant = OutputerVariant(test_output)
 ```
@@ -157,20 +157,20 @@ Default implementations:
 Example:
 ```
 # Regular console output
-var outputer = DefaultLoggerOutputer("console", LOG_LEVELS['INFO'])
-var outputer_variant = OutputerVariant(outputer)
+var outputter = DefaultLoggerOutputer("console", LOG_LEVELS['INFO'])
+var outputter_variant = OutputerVariant(outputter)
 
 # Test output that captures messages
-var test_outputer = TestLoggerOutputer("testing", LOG_LEVELS['DEBUG'])
-var test_variant = OutputerVariant(test_outputer)
+var test_outputter = TestLoggerOutputer("testing", LOG_LEVELS['DEBUG'])
+var test_variant = OutputerVariant(test_outputter)
 ```
 
-To create a custom outputer:
+To create a custom outputter:
 1. Implement the LoggerOutputer trait
-2. Create an instance of your outputer
+2. Create an instance of your outputter
 3. Use it with the Logger through OutputerVariant
 
-The OutputerVariant can be passed to Logger.add_output() to install the outputer.
+The OutputerVariant can be passed to Logger.add_output() to install the outputter.
 """
 
 

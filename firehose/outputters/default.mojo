@@ -9,16 +9,16 @@ struct DefaultLoggerOutputer(LoggerOutputer):
     """
     DefaultLoggerOutputer: Standard console output implementation.
     
-    This is the default outputer implementation that sends log messages
+    This is the default outputter implementation that sends log messages
     to the console using the built-in print() function. It provides a
     basic output mechanism suitable for simple applications and development.
     
     Example:
     ```
-    var outputer = DefaultLoggerOutputer("console", LOG_LEVELS['INFO'])
+    var outputter = DefaultLoggerOutputer("console", LOG_LEVELS['INFO'])
     
     # Output a message to the console
-    outputer.output("Hello, world!") # Prints "Hello, world!" to the console
+    outputter.output("Hello, world!") # Prints "Hello, world!" to the console
     ```
     
     For production applications, you may want to create custom outputters
@@ -27,12 +27,12 @@ struct DefaultLoggerOutputer(LoggerOutputer):
     
     var name: String
     """
-    Name of the outputer instance, useful for debugging or management.
+    Name of the outputter instance, useful for debugging or management.
     """
     
     var level: Int
     """
-    Level associated with this outputer, though not used in the default implementation.
+    Level associated with this outputter, though not used in the default implementation.
     In custom implementations, this could be used to determine output destinations
     based on message level.
     
@@ -50,12 +50,12 @@ struct DefaultLoggerOutputer(LoggerOutputer):
         Initialize a new DefaultLoggerOutputer.
         
         Args:
-            name: Identifier for this outputer instance.
+            name: Identifier for this outputter instance.
             level: Level value (unused in the default implementation).
 
         Example:
         ```
-        var outputer = DefaultLoggerOutputer("console", LOG_LEVELS['INFO'])
+        var outputter = DefaultLoggerOutputer("console", LOG_LEVELS['INFO'])
         ```
         """
         self.name = name

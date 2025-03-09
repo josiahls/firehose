@@ -11,7 +11,7 @@ trait LoggerOutputer(CollectionElement):
     of log messages to their destinations, such as the console, files, 
     network services, or in-memory collections.
     
-    Implementing a custom outputer:
+    Implementing a custom outputter:
     ```
     @value
     struct FileOutputer(LoggerOutputer):
@@ -28,8 +28,8 @@ trait LoggerOutputer(CollectionElement):
             print("Writing to", self.file_path, ":", message)
     ```
     
-    The Logger will call the output() method on each outputer in its
-    output chain. Each outputer receives the same formatted message.
+    The Logger will call the output() method on each outputter in its
+    output chain. Each outputter receives the same formatted message.
     """
     
     fn output(mut self, record: Record):
@@ -45,7 +45,7 @@ trait LoggerOutputer(CollectionElement):
         The method must be mut because some outputters (like the TestLoggerOutputer)
         need to modify their state when outputting a message.
         
-        Each outputer in the Logger's output chain receives the same formatted
+        Each outputter in the Logger's output chain receives the same formatted
         message, allowing multiple simultaneous outputs (console, file, etc.).
         """
         ...
