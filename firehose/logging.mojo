@@ -80,8 +80,8 @@ struct Logger:
         
         Args:
             name: Identifier for this logger
-            level: Numeric level threshold (default: 0, which is TRACE)
-            
+            level: Numeric level threshold (default: 0, which is TRACE).
+
         This creates a logger with no filters, formatters, or outputers.
         You'll need to add those separately.
         """
