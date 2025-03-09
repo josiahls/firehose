@@ -28,3 +28,7 @@ struct Record:
     The severity level at which this message was logged (e.g., INFO=20, DEBUG=10).
     This indicates which logging method was called (info(), debug(), etc.).
     """
+    var logger_name: String
+    """
+    The name of the logger that created this record.
+    """

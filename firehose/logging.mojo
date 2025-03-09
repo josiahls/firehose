@@ -1,6 +1,7 @@
 # Native Mojo Modules
 from collections.dict import Dict
 from utils import Variant
+from memory import ArcPointer
 # Third Party Mojo Modules
 # First Party Modules
 from firehose import FormatterVariant, FilterVariant, OutputerVariant, LOG_LEVELS, LOG_LEVELS_NUMERIC, Record
@@ -27,26 +28,29 @@ struct Logger:
     logger.error("Error message")
     ```
     """
-    var name:String
+    var name: String
     """
     Name of the logger instance, used for identification in log messages.
     """
-    var level:Int
+    var level: Int
     """
     The base logging level for this logger. Messages with a level below
     this value will be filtered out.
     """
-    var formatters:List[FormatterVariant]
+    var formatters: List[ArcPointer[FormatterVariant]]
     """
     List of formatters to apply to messages before output.
+    Each formatter is stored as an ArcPointer to maintain shared ownership.
     """
-    var filters:List[FilterVariant]
+    var filters: List[ArcPointer[FilterVariant]]
     """
     List of filters that determine which messages should be processed.
+    Each filter is stored as an ArcPointer to maintain shared ownership.
     """
-    var outputs:List[OutputerVariant]
+    var outputs: List[ArcPointer[OutputerVariant]]
     """
     List of outputers that receive formatted messages for final delivery.
+    Each outputer is stored as an ArcPointer to maintain shared ownership.
     """
 
     @staticmethod
@@ -64,10 +68,15 @@ struct Logger:
         This creates a logger with the standard filter, formatter and outputer.
         """
         try:
-            logger = Logger(name, LOG_LEVELS[level])
-            logger.add_formatter(DefaultLoggerFormatter(logger.name, logger.level))
-            logger.add_filter(DefaultLoggerFilter(logger.name, logger.level))
-            logger.add_output(DefaultLoggerOutputer(logger.name, logger.level))
+            var logger = Logger(name, LOG_LEVELS[level])
+            # Create components with ArcPointers
+            var formatter = ArcPointer[FormatterVariant](DefaultLoggerFormatter(logger.name, logger.level))
+            var filter = ArcPointer[FilterVariant](DefaultLoggerFilter(logger.name, logger.level))
+            var output = ArcPointer[OutputerVariant](DefaultLoggerOutputer(logger.name, logger.level))
+            
+            logger.add_formatter(formatter^)
+            logger.add_filter(filter^)
+            logger.add_output(output^)
             return logger^
         except:
             print('Failed to create default logger for ' + name)
@@ -88,201 +97,165 @@ struct Logger:
         self.name = name
         self.level = level
         debug_assert(self.level in LOG_LEVELS_NUMERIC, 'Invalid log level: ' + String(self.level))
-        self.formatters = List[FormatterVariant]()
-        self.filters = List[FilterVariant]()
-        self.outputs = List[OutputerVariant]()
+        self.formatters = List[ArcPointer[FormatterVariant]]()
+        self.filters = List[ArcPointer[FilterVariant]]()
+        self.outputs = List[ArcPointer[OutputerVariant]]()
 
 
-    fn add_formatter(mut self, owned formatter:FormatterVariant):
+    fn add_formatter(mut self, owned formatter: FormatterVariant):
         """
-        Add a formatter to the logger.
+        Add a formatter to the logger by taking ownership.
         
         Args:
-            formatter: The formatter to add.
-
-        Formatters transform messages before they are output.
-        They are applied in the order they are added.
-        """
-        self.formatters.append(formatter)
-
-    fn add_filter(mut self, owned filter: FilterVariant):
-        """
-        Add a filter to the logger.
-        
-        Args:
-            filter: The filter to add.
-
-        Filters determine whether messages should be processed or dropped.
-        If any filter rejects a message, it will not be processed further.
-        """
-        self.filters.append(filter)
-
-    fn add_output(mut self, owned output:OutputerVariant):
-        """
-        Add an outputer to the logger.
-        
-        Args:
-            output: The outputer to add.
-
-        Outputers handle the final delivery of formatted messages.
-        All configured outputers receive the same formatted messages.
-        """
-        self.outputs.append(output)
-
-    @staticmethod
-    fn _apply_formatter(formatter_var: FormatterVariant, record: Record) -> Record:
-        """
-        Apply a formatter to a message.
-        
-        Args:
-            formatter_var: The formatter to apply
-            record: The record to format
+            formatter: The formatter to add
             
-        Returns:
-            String: The formatted message
+        WARNING: This method creates a copy of the formatter. If you need to 
+        access the formatter after adding it to the logger, use add_formatter
+        with an ArcPointer instead.
         """
+        print("Warning: Creating copy of formatter. If you need to access this formatter " +
+              "after adding it to the logger, use add_formatter with an ArcPointer instead.")
+        self.formatters.append(ArcPointer[FormatterVariant](formatter^))
+
+    fn add_formatter(mut self, owned formatter: ArcPointer[FormatterVariant]):
+        """
+        Add a formatter to the logger using an ArcPointer.
+        
+        Args:
+            formatter: ArcPointer to the formatter to add
+            
+        This method maintains shared ownership of the formatter, allowing
+        you to still access it after adding it to the logger.
+        """
+        self.formatters.append(formatter^)
+
+    fn add_filter_owned(mut self, owned filter: FilterVariant):
+        """
+        Add a filter to the logger by taking ownership.
+        
+        Args:
+            filter: The filter to add
+            
+        WARNING: This method creates a copy of the filter. If you need to 
+        access the filter after adding it to the logger, use add_filter
+        with an ArcPointer instead.
+        """
+        print("Warning: Creating copy of filter. If you need to access this filter " +
+              "after adding it to the logger, use add_filter with an ArcPointer instead.")
+        self.filters.append(ArcPointer[FilterVariant](filter^))
+
+    fn add_filter(mut self, owned filter: ArcPointer[FilterVariant]):
+        """
+        Add a filter to the logger using an ArcPointer.
+        
+        Args:
+            filter: ArcPointer to the filter to add
+            
+        This method maintains shared ownership of the filter, allowing
+        you to still access it after adding it to the logger.
+        """
+        self.filters.append(filter^)
+
+    fn add_output(mut self, owned output: OutputerVariant):
+        """
+        Add an outputer to the logger by taking ownership.
+        
+        Args:
+            output: The outputer to add
+            
+        WARNING: This method creates a copy of the outputer. If you need to 
+        access the outputer after adding it to the logger, use add_output
+        with an ArcPointer instead.
+        """
+        print("Warning: Creating copy of outputer. If you need to access this outputer " +
+              "after adding it to the logger, use add_output with an ArcPointer instead.")
+        self.outputs.append(ArcPointer[OutputerVariant](output^))
+
+    fn add_output(mut self, owned output: ArcPointer[OutputerVariant]):
+        """
+        Add an outputer to the logger using an ArcPointer.
+        
+        Args:
+            output: ArcPointer to the outputer to add.
+            
+        This method maintains shared ownership of the outputer, allowing
+        you to still access it after adding it to the logger.
+        """
+        self.outputs.append(output^)
+
+    fn _apply_formatter(self, formatter_ptr: ArcPointer[FormatterVariant], record: Record) -> Record:
         @parameter
         for i in range(len(VariadicList(FormatterVariant.Ts))):
             alias T = FormatterVariant.Ts[i]
-            if formatter_var.isa[T]():
-                return formatter_var[T].format(record)
+            if formatter_ptr[].isa[T]():
+                return formatter_ptr[][T].format(record)
         return record
 
-    @staticmethod
-    fn _apply_filter(filter_var: FilterVariant, record: Record) -> Bool:
-        """
-        Apply a filter to a message.
-        
-        Args:
-            filter_var: The filter to apply
-            record: The record to filter
-            
-        Returns:
-            Bool: True if the message passes the filter, False otherwise
-        """
+    fn _apply_filter(self, filter_ptr: ArcPointer[FilterVariant], record: Record) -> Bool:
         @parameter
         for i in range(len(VariadicList(FilterVariant.Ts))):
             alias T = FilterVariant.Ts[i]
-            if filter_var.isa[T]():
-                return filter_var[T].filter(record)
-        return True  # Default pass if filter type not recognized
+            if filter_ptr[].isa[T]():
+                return filter_ptr[][T].filter(record)
+        return True
 
-    @staticmethod
-    fn _apply_output(mut output_var: OutputerVariant, record: Record):
-        """
-        Send a message to an output.
-        
-        Args:
-            output_var: The outputer to use
-            record: The formatted message to output
-        """
+    fn _apply_output(self, mut output_ptr: ArcPointer[OutputerVariant], record: Record):
         @parameter
         for i in range(len(VariadicList(OutputerVariant.Ts))):
             alias T = OutputerVariant.Ts[i]
-            if output_var.isa[T]():
-                output_var[T].output(record)
-        return
+            if output_ptr[].isa[T]():
+                output_ptr[][T].output(record)
 
-    @staticmethod
-    fn run_pipeline(
-        mut record: Record,
-        mut filters: List[FilterVariant],
-        mut formatters: List[FormatterVariant],
-        mut outputs: List[OutputerVariant]
-    ) -> Bool:
-        """
-        Run the pipeline of filters, formatters, and outputers.
-        """
-        # Make a copy of the record to avoid aliasing
+    fn run_pipeline(mut self, mut record: Record) -> Bool:
+        """Run the pipeline of filters, formatters, and outputers."""
         var current_record = record
         
         # Apply filters
-        for filter in filters:
-            if not Self._apply_filter(filter[], current_record):
+        for i in range(len(self.filters)):
+            var filter = self.filters[i]
+            if not self._apply_filter(filter, current_record):
                 return False
 
         # Apply formatters
-        for formatter in formatters:
-            current_record = Self._apply_formatter(formatter[], current_record)
+        for i in range(len(self.formatters)):
+            var formatter = self.formatters[i]
+            current_record = self._apply_formatter(formatter, current_record)
 
-        # Apply outputs - use final copy to avoid aliasing
+        # Apply outputs
         var final_record = current_record
-        for outputer in outputs:
-            Self._apply_output(outputer[], final_record)
+        for i in range(len(self.outputs)):
+            var outputer = self.outputs[i]
+            self._apply_output(outputer, final_record)
 
         return True
 
-    fn trace(mut self, message:String):
+    fn make_record(mut self, message:String, log_level:Int) -> Record:
         """
-        Log a message at TRACE level (0).
-        
-        Args:
-            message: The message to log.
-
-        TRACE is the most verbose level, for fine-grained debugging information.
+        Make a record for a message.
         """
-        record = Record(message, message, self.level, LOG_LEVELS.get('TRACE',0))
-        _ = Self.run_pipeline(record, self.filters, self.formatters, self.outputs)
+        return Record(message, message, self.level, log_level, self.name)
 
-    fn debug(mut self, message:String):
-        """
-        Log a message at DEBUG level (10).
-        
-        Args:
-            message: The message to log.
+    fn trace(mut self, message: String):
+        var record = Record(message, message, self.level, LOG_LEVELS.get('TRACE',0), self.name)
+        _ = self.run_pipeline(record)
 
-        DEBUG is used for detailed information useful during development.
-        """
-        record = Record(message, message, self.level, LOG_LEVELS.get('DEBUG',0))
-        _ = Self.run_pipeline(record, self.filters, self.formatters, self.outputs)
+    fn debug(mut self, message: String):
+        var record = Record(message, message, self.level, LOG_LEVELS.get('DEBUG',0), self.name)
+        _ = self.run_pipeline(record)
 
-    fn info(mut self, message:String):
-        """
-        Log a message at INFO level (20).
-        
-        Args:
-            message: The message to log.
+    fn info(mut self, message: String):
+        var record = Record(message, message, self.level, LOG_LEVELS.get('INFO',0), self.name)
+        _ = self.run_pipeline(record)
 
-        INFO is used for general runtime information about normal operation.
-        """
+    fn warning(mut self, message: String):
+        var record = Record(message, message, self.level, LOG_LEVELS.get('WARNING',0), self.name)
+        _ = self.run_pipeline(record)
 
-        var record = Record(message, message, self.level, LOG_LEVELS.get('INFO',0))
-        _ = Self.run_pipeline(record, self.filters, self.formatters, self.outputs)
+    fn error(mut self, message: String):
+        var record = Record(message, message, self.level, LOG_LEVELS.get('ERROR',0), self.name)
+        _ = self.run_pipeline(record)
 
-
-    fn critical(mut self, message:String):
-        """
-        Log a message at CRITICAL level (50).
-        
-        Args:
-            message: The message to log.
-
-        CRITICAL is used for severe errors that may lead to program termination.
-        """
-        var record = Record(message, message, self.level, LOG_LEVELS.get('CRITICAL',0))
-        _ = Self.run_pipeline(record, self.filters, self.formatters, self.outputs)
-
-    fn error(mut self, message:String):
-        """
-        Log a message at ERROR level (40).
-        
-        Args:
-            message: The message to log.
-
-        ERROR is used for serious issues that prevent operations from succeeding.
-        """
-        var record = Record(message, message, self.level, LOG_LEVELS.get('ERROR',0))
-        _ = Self.run_pipeline(record, self.filters, self.formatters, self.outputs)
-
-    fn warning(mut self, message:String):
-        """
-        Log a message at WARNING level (30).
-        
-        Args:
-            message: The message to log.
-
-        WARNING is used for potential issues that don't prevent normal operation.
-        """
-        var record = Record(message, message, self.level, LOG_LEVELS.get('WARNING',0))
-        _ = Self.run_pipeline(record, self.filters, self.formatters, self.outputs)
+    fn critical(mut self, message: String):
+        var record = Record(message, message, self.level, LOG_LEVELS.get('CRITICAL',0), self.name)
+        _ = self.run_pipeline(record)
 
