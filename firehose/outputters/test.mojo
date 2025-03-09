@@ -2,7 +2,7 @@
 from collections.list import List
 # Third Party Mojo Modules
 # First Party Modules
-from firehose.outputers.common import LoggerOutputer
+from firehose.outputters.common import LoggerOutputer
 from firehose.common import Record
 
 

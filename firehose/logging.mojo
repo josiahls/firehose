@@ -14,7 +14,7 @@ struct Logger:
     
     The Logger class provides methods for logging messages at different
     severity levels and manages the processing pipeline through filters, 
-    formatters, and outputers.
+    formatters, and outputters.
     
     Basic usage:
     ```
@@ -49,7 +49,7 @@ struct Logger:
     """
     var outputs: List[ArcPointer[OutputerVariant]]
     """
-    List of outputers that receive formatted messages for final delivery.
+    List of outputters that receive formatted messages for final delivery.
     Each outputer is stored as an ArcPointer to maintain shared ownership.
     """
 
@@ -91,7 +91,7 @@ struct Logger:
             name: Identifier for this logger
             level: Numeric level threshold (default: 0, which is TRACE).
 
-        This creates a logger with no filters, formatters, or outputers.
+        This creates a logger with no filters, formatters, or outputters.
         You'll need to add those separately.
         """
         self.name = name
@@ -207,7 +207,7 @@ struct Logger:
                 output_ptr[][T].output(record)
 
     fn run_pipeline(mut self, mut record: Record) -> Bool:
-        """Run the pipeline of filters, formatters, and outputers."""
+        """Run the pipeline of filters, formatters, and outputters."""
         var current_record = record
         
         # Apply filters

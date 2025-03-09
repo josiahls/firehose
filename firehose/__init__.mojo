@@ -69,13 +69,13 @@ from firehose.common import Record
 # Import the different variant types
 from firehose.filterers.variant import Variant as _FilterVariant
 from firehose.formatters.variant import Variant as _FormatterVariant
-from firehose.outputers.variant import Variant as _OutputerVariant
+from firehose.outputters.variant import Variant as _OutputerVariant
 
 # Import the default implementations
 from firehose.filterers.default import DefaultLoggerFilter
 from firehose.formatters.default import DefaultLoggerFormatter
-from firehose.outputers.default import DefaultLoggerOutputer
-from firehose.outputers.test import TestLoggerOutputer
+from firehose.outputters.default import DefaultLoggerOutputer
+from firehose.outputters.test import TestLoggerOutputer
 
 # Define the variants
 """
@@ -145,7 +145,7 @@ The FormatterVariant can be passed to Logger.add_formatter() to install the form
 
 alias OutputerVariant = _OutputerVariant[DefaultLoggerOutputer, TestLoggerOutputer]
 """
-OutputerVariant: Runtime-polymorphic type for message outputers.
+OutputerVariant: Runtime-polymorphic type for message outputters.
 
 OutputerVariant objects handle the final delivery of log messages to their
 destination, such as the console, a file, or an in-memory collection.

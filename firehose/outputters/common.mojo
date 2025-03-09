@@ -42,7 +42,7 @@ trait LoggerOutputer(CollectionElement):
         This method is called by the Logger for each message being logged
         after it has passed all filters and been formatted by all formatters.
         
-        The method must be mut because some outputers (like the TestLoggerOutputer)
+        The method must be mut because some outputters (like the TestLoggerOutputer)
         need to modify their state when outputting a message.
         
         Each outputer in the Logger's output chain receives the same formatted

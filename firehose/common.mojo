@@ -16,7 +16,7 @@ struct Record:
     var message: String
     """
     The current version of the message, which may have been modified by formatters.
-    This is the version that will be sent to outputers.
+    This is the version that will be sent to outputters.
     """
     var logger_level: Int
     """

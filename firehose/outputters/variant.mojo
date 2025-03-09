@@ -59,7 +59,7 @@ fn _align_up(value: Int, alignment: Int) -> Int:
 # ===----------------------------------------------------------------------=== #
 # Variant
 # ===----------------------------------------------------------------------=== #
-from firehose.outputers.common import LoggerOutputer
+from firehose.outputters.common import LoggerOutputer
 
 
 struct Variant[*Ts: LoggerOutputer](

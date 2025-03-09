@@ -1,7 +1,7 @@
 # Native Mojo Modules
 # Third Party Mojo Modules
 # First Party Modules
-from firehose.outputers.common import LoggerOutputer
+from firehose.outputters.common import LoggerOutputer
 from firehose.common import Record
 
 @value
@@ -21,7 +21,7 @@ struct DefaultLoggerOutputer(LoggerOutputer):
     outputer.output("Hello, world!") # Prints "Hello, world!" to the console
     ```
     
-    For production applications, you may want to create custom outputers
+    For production applications, you may want to create custom outputters
     that write to files, network services, or other destinations.
     """
     
