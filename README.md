@@ -24,7 +24,7 @@ fn main() raises:
     # Test all of the format fields
     logger.add_formatter_copy(
         DefaultLoggerFormatter(
-            '%(file)s:%(line)s:%(column)s %(logger_name)s - %(message_level)s - %(message_level_name)s - %(message_level_name_short)s: %(original_message)s'
+            '%(file)s:%(file_name)s:%(line)s:%(column)s %(logger_name)s - %(message_level)s - %(message_level_name)s - %(message_level_name_short)s: %(original_message)s'
         )
     )
     logger.add_outputter_copy(DefaultLoggerOutputer())
