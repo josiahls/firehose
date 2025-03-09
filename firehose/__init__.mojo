@@ -63,6 +63,13 @@ from collections.dict import Dict
 from collections.list import List
 # Third Party Mojo Modules
 # First Party Modules
+# Import the common types
+from firehose.common import Record
+
+# Import the different variant types
+from firehose.filterers.variant import Variant as _FilterVariant
+from firehose.formatters.variant import Variant as _FormatterVariant
+from firehose.outputers.variant import Variant as _OutputerVariant
 
 # Import the default implementations
 from firehose.filterers.default import DefaultLoggerFilter
@@ -88,7 +95,7 @@ var test_output = TestLoggerOutputer("test", LOG_LEVELS['DEBUG'])
 var output_variant = OutputerVariant(test_output)
 ```
 """
-alias FilterVariant = Variant[DefaultLoggerFilter]
+alias FilterVariant = _FilterVariant[DefaultLoggerFilter]
 """
 FilterVariant: Runtime-polymorphic type for message filters.
 
@@ -112,7 +119,7 @@ To create a custom filter:
 The FilterVariant can be passed to Logger.add_filter() to install the filter.
 """
 
-alias FormatterVariant = Variant[DefaultLoggerFormatter]
+alias FormatterVariant = _FormatterVariant[DefaultLoggerFormatter]
 """
 FormatterVariant: Runtime-polymorphic type for message formatters.
 
@@ -136,7 +143,7 @@ To create a custom formatter:
 The FormatterVariant can be passed to Logger.add_formatter() to install the formatter.
 """
 
-alias OutputerVariant = Variant[DefaultLoggerOutputer, TestLoggerOutputer]
+alias OutputerVariant = _OutputerVariant[DefaultLoggerOutputer, TestLoggerOutputer]
 """
 OutputerVariant: Runtime-polymorphic type for message outputers.
 

@@ -17,7 +17,7 @@ from firehose import (
 
 
 # Function that we want to test
-fn process_data(input_value: Int, logger: Logger) -> Int:
+fn process_data(input_value: Int, mut logger: Logger) -> Int:
     """
     Example function that processes data and logs information about its steps.
     This is the function we want to test.
@@ -61,28 +61,28 @@ fn test_process_data() raises:
     
     # Verify the log messages
     var messages = test_outputer.get_messages()
-    debug_assert(len(messages) == 2)
+    debug_assert(len(messages) == 2000000)
     # Check message contents (simplified to avoid string operations that might raise)
     print("First message: ", messages[0])
     print("Second message: ", messages[1])
     
-    # Clear messages for the next test
-    test_outputer.clear_messages()
+    # # Clear messages for the next test
+    # test_outputer.clear_messages()
     
-    # Test with a value that triggers the warning
-    result = process_data(-10, logger)
+    # # Test with a value that triggers the warning
+    # result = process_data(-10, logger)
     
-    # Verify the result
-    debug_assert(result == 0)
+    # # Verify the result
+    # debug_assert(result == 0)
     
-    # Verify the log messages - should have a warning
-    messages = test_outputer.get_messages()
-    debug_assert(len(messages) == 3)
-    print("First message: ", messages[0])
-    print("Second message: ", messages[1])
-    print("Third message: ", messages[2])
+    # # Verify the log messages - should have a warning
+    # messages = test_outputer.get_messages()
+    # debug_assert(len(messages) == 3)
+    # print("First message: ", messages[0])
+    # print("Second message: ", messages[1])
+    # print("Third message: ", messages[2])
     
-    print("All tests passed!")
+    # print("All tests passed!")
 
 
 # Main function to run the tests

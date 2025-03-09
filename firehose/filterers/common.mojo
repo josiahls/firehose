@@ -1,7 +1,7 @@
 # Native Mojo Modules
 # Third Party Mojo Modules
 # First Party Modules
-
+from firehose.common import Record
 
 trait LoggerFilter(CollectionElement):
     """
@@ -23,14 +23,14 @@ trait LoggerFilter(CollectionElement):
             self.level = level
             self.included_prefixes = prefixes
             
-        fn filter(self, level: Int, message: String) -> Bool:
+        fn filter(self, record: Record) -> Bool:
             # First check message level
-            if level < self.level:
+            if record.level < self.level:
                 return False
                 
             # Then check for included prefixes
             for prefix in self.included_prefixes:
-                if message.starts_with(prefix):
+                if record.message.starts_with(prefix):
                     return True
             
             return False
@@ -40,13 +40,12 @@ trait LoggerFilter(CollectionElement):
     If any filter returns False, the message will be dropped and not processed further.
     """
     
-    fn filter(self, level: Int, message: String) -> Bool:
+    fn filter(self, record: Record) -> Bool:
         """
         Determines whether a log message should be processed.
         
         Args:
-            level: The numeric level of the message being logged.
-            message: The content of the message being logged.
+            record: The record to filter.
 
         Returns:
             Bool: True if the message should be processed, False if it should be dropped

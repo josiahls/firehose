@@ -1,7 +1,7 @@
 # Native Mojo Modules
 # Third Party Mojo Modules
 # First Party Modules
-
+from firehose.common import Record
 
 trait LoggerFormatter(CollectionElement):
     """
@@ -31,16 +31,16 @@ trait LoggerFormatter(CollectionElement):
     in the chain.
     """
     
-    fn format(self, message: String) -> String:
+    fn format(self, record: Record) -> Record:
         """
         Transforms a log message before output.
         
         Args:
-            message: The log message to be formatted, which could be either
+            record: The record to be formatted, which could be either
                     the original message or the output from a previous formatter.
 
         Returns:
-            String: The transformed/formatted message
+            Record: The transformed/formatted record
             
         This method is called by the Logger for each message being logged after
         it has passed all filters. Formatters are applied in sequence, with the

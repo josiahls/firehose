@@ -3,6 +3,7 @@ from collections.list import List
 # Third Party Mojo Modules
 # First Party Modules
 from firehose.outputers.common import LoggerOutputer
+from firehose.common import Record
 
 
 @value
@@ -96,12 +97,12 @@ struct TestLoggerOutputer(LoggerOutputer):
         self.messages = List[String]()
         self.max_messages = 1000
 
-    fn output(mut self, message: String):
+    fn output(mut self, record: Record):
         """
         Capture a log message in the internal message list.
         
         Args:
-            message: The formatted message to capture
+            record: The log record to capture
             
         This method appends the message to the internal message list.
         The 'mut' designation is required because this method modifies
@@ -113,10 +114,10 @@ struct TestLoggerOutputer(LoggerOutputer):
         Note that there's no return value - the message is stored for
         later retrieval via get_messages().
         """
-        self.messages.append(message)
+        self.messages.append(record.message)
         if len(self.messages) > self.max_messages:
             # Remove oldest message if we exceed max capacity
-            self.messages = self.messages[1:]
+            _ = self.messages.pop(0)
 
     fn get_messages(self) -> List[String]:
         """

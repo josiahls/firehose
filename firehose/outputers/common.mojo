@@ -1,7 +1,7 @@
 # Native Mojo Modules
 # Third Party Mojo Modules
 # First Party Modules
-
+from firehose.common import Record
 
 trait LoggerOutputer(CollectionElement):
     """
@@ -32,12 +32,12 @@ trait LoggerOutputer(CollectionElement):
     output chain. Each outputer receives the same formatted message.
     """
     
-    fn output(mut self, message: String):
+    fn output(mut self, record: Record):
         """
         Outputs a formatted log message to its destination.
         
         Args:
-            message: The formatted message to be output
+            record: The formatted record to be output
             
         This method is called by the Logger for each message being logged
         after it has passed all filters and been formatted by all formatters.

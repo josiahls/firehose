@@ -3,7 +3,7 @@ from collections.dict import Dict
 from utils import Variant
 # Third Party Mojo Modules
 # First Party Modules
-from firehose import FormatterVariant, FilterVariant, OutputerVariant, LOG_LEVELS, LOG_LEVELS_NUMERIC
+from firehose import FormatterVariant, FilterVariant, OutputerVariant, LOG_LEVELS, LOG_LEVELS_NUMERIC, Record
 
 
 @value
@@ -93,138 +93,13 @@ struct Logger:
         self.outputs = List[OutputerVariant]()
 
 
-    fn _apply_formatter(self, formatter_var: FormatterVariant, message: String) -> String:
-        """
-        Apply a formatter to a message.
-        
-        Args:
-            formatter_var: The formatter to apply
-            message: The message to format
-            
-        Returns:
-            String: The formatted message
-        """
-        @parameter
-        for i in range(len(VariadicList(FormatterVariant.Ts))):
-            alias T = FormatterVariant.Ts[i]
-            if formatter_var.isa[T]():
-                return formatter_var[T].format(message)
-        return message
-
-    fn _apply_filter(self, filter_var: FilterVariant, level: Int, message: String) -> Bool:
-        """
-        Apply a filter to a message.
-        
-        Args:
-            filter_var: The filter to apply
-            level: Numeric level of the message
-            message: Content of the message
-            
-        Returns:
-            Bool: True if the message passes the filter, False otherwise
-        """
-        @parameter
-        for i in range(len(VariadicList(FilterVariant.Ts))):
-            alias T = FilterVariant.Ts[i]
-            if filter_var.isa[T]():
-                return filter_var[T].filter(level, message)
-        return True  # Default pass if filter type not recognized
-
-    fn _apply_output(self, output_var: OutputerVariant, message: String):
-        """
-        Send a message to an output.
-        
-        Args:
-            output_var: The outputer to use
-            message: The formatted message to output
-        """
-        @parameter
-        for i in range(len(VariadicList(OutputerVariant.Ts))):
-            alias T = OutputerVariant.Ts[i]
-            if output_var.isa[T]():
-                output_var[T].output(message)
-        return
-
-    fn info(self, message:String):
-        """
-        Log a message at INFO level (20).
-        
-        Args:
-            message: The message to log
-            
-        INFO is used for general runtime information about normal operation.
-        """
-        for filterer in self.filters:
-            if not self._apply_filter(filterer[], self.level, message):
-                return
-
-        # for formatter in self.formatters:
-        #     message = formatter.format(message)
-
-
-
-    fn debug(self, message:String):
-        """
-        Log a message at DEBUG level (10).
-        
-        Args:
-            message: The message to log
-            
-        DEBUG is used for detailed information useful during development.
-        """
-        print(self.name + ': ' + message)
-
-    fn critical(self, message:String):
-        """
-        Log a message at CRITICAL level (50).
-        
-        Args:
-            message: The message to log
-            
-        CRITICAL is used for severe errors that may lead to program termination.
-        """
-        print(self.name + ': ' + message)
-
-    fn error(self, message:String):
-        """
-        Log a message at ERROR level (40).
-        
-        Args:
-            message: The message to log
-            
-        ERROR is used for serious issues that prevent operations from succeeding.
-        """
-        print(self.name + ': ' + message)
-
-    fn warning(self, message:String):
-        """
-        Log a message at WARNING level (30).
-        
-        Args:
-            message: The message to log
-            
-        WARNING is used for potential issues that don't prevent normal operation.
-        """
-        print(self.name + ': ' + message)
-
-    fn trace(self, message:String):
-        """
-        Log a message at TRACE level (0).
-        
-        Args:
-            message: The message to log
-            
-        TRACE is the most verbose level, for fine-grained debugging information.
-        """
-        print(self.name + ': ' + message)
-
     fn add_formatter(mut self, owned formatter:FormatterVariant):
         """
         Add a formatter to the logger.
         
         Args:
-            formatter: The formatter to add
-            
+            formatter: The formatter to add.
+
         Formatters transform messages before they are output.
         They are applied in the order they are added.
         """
@@ -235,8 +110,8 @@ struct Logger:
         Add a filter to the logger.
         
         Args:
-            filter: The filter to add
-            
+            filter: The filter to add.
+
         Filters determine whether messages should be processed or dropped.
         If any filter rejects a message, it will not be processed further.
         """
@@ -247,9 +122,167 @@ struct Logger:
         Add an outputer to the logger.
         
         Args:
-            output: The outputer to add
-            
+            output: The outputer to add.
+
         Outputers handle the final delivery of formatted messages.
         All configured outputers receive the same formatted messages.
         """
         self.outputs.append(output)
+
+    @staticmethod
+    fn _apply_formatter(formatter_var: FormatterVariant, record: Record) -> Record:
+        """
+        Apply a formatter to a message.
+        
+        Args:
+            formatter_var: The formatter to apply
+            record: The record to format
+            
+        Returns:
+            String: The formatted message
+        """
+        @parameter
+        for i in range(len(VariadicList(FormatterVariant.Ts))):
+            alias T = FormatterVariant.Ts[i]
+            if formatter_var.isa[T]():
+                return formatter_var[T].format(record)
+        return record
+
+    @staticmethod
+    fn _apply_filter(filter_var: FilterVariant, record: Record) -> Bool:
+        """
+        Apply a filter to a message.
+        
+        Args:
+            filter_var: The filter to apply
+            record: The record to filter
+            
+        Returns:
+            Bool: True if the message passes the filter, False otherwise
+        """
+        @parameter
+        for i in range(len(VariadicList(FilterVariant.Ts))):
+            alias T = FilterVariant.Ts[i]
+            if filter_var.isa[T]():
+                return filter_var[T].filter(record)
+        return True  # Default pass if filter type not recognized
+
+    @staticmethod
+    fn _apply_output(mut output_var: OutputerVariant, record: Record):
+        """
+        Send a message to an output.
+        
+        Args:
+            output_var: The outputer to use
+            record: The formatted message to output
+        """
+        @parameter
+        for i in range(len(VariadicList(OutputerVariant.Ts))):
+            alias T = OutputerVariant.Ts[i]
+            if output_var.isa[T]():
+                output_var[T].output(record)
+        return
+
+    @staticmethod
+    fn run_pipeline(
+        mut record: Record,
+        mut filters: List[FilterVariant],
+        mut formatters: List[FormatterVariant],
+        mut outputs: List[OutputerVariant]
+    ) -> Bool:
+        """
+        Run the pipeline of filters, formatters, and outputers.
+        """
+        # Make a copy of the record to avoid aliasing
+        var current_record = record
+        
+        # Apply filters
+        for filter in filters:
+            if not Self._apply_filter(filter[], current_record):
+                return False
+
+        # Apply formatters
+        for formatter in formatters:
+            current_record = Self._apply_formatter(formatter[], current_record)
+
+        # Apply outputs - use final copy to avoid aliasing
+        var final_record = current_record
+        for outputer in outputs:
+            Self._apply_output(outputer[], final_record)
+
+        return True
+
+    fn trace(mut self, message:String):
+        """
+        Log a message at TRACE level (0).
+        
+        Args:
+            message: The message to log.
+
+        TRACE is the most verbose level, for fine-grained debugging information.
+        """
+        record = Record(message, message, self.level, LOG_LEVELS.get('TRACE',0))
+        _ = Self.run_pipeline(record, self.filters, self.formatters, self.outputs)
+
+    fn debug(mut self, message:String):
+        """
+        Log a message at DEBUG level (10).
+        
+        Args:
+            message: The message to log.
+
+        DEBUG is used for detailed information useful during development.
+        """
+        record = Record(message, message, self.level, LOG_LEVELS.get('DEBUG',0))
+        _ = Self.run_pipeline(record, self.filters, self.formatters, self.outputs)
+
+    fn info(mut self, message:String):
+        """
+        Log a message at INFO level (20).
+        
+        Args:
+            message: The message to log.
+
+        INFO is used for general runtime information about normal operation.
+        """
+
+        var record = Record(message, message, self.level, LOG_LEVELS.get('INFO',0))
+        _ = Self.run_pipeline(record, self.filters, self.formatters, self.outputs)
+
+
+    fn critical(mut self, message:String):
+        """
+        Log a message at CRITICAL level (50).
+        
+        Args:
+            message: The message to log.
+
+        CRITICAL is used for severe errors that may lead to program termination.
+        """
+        var record = Record(message, message, self.level, LOG_LEVELS.get('CRITICAL',0))
+        _ = Self.run_pipeline(record, self.filters, self.formatters, self.outputs)
+
+    fn error(mut self, message:String):
+        """
+        Log a message at ERROR level (40).
+        
+        Args:
+            message: The message to log.
+
+        ERROR is used for serious issues that prevent operations from succeeding.
+        """
+        var record = Record(message, message, self.level, LOG_LEVELS.get('ERROR',0))
+        _ = Self.run_pipeline(record, self.filters, self.formatters, self.outputs)
+
+    fn warning(mut self, message:String):
+        """
+        Log a message at WARNING level (30).
+        
+        Args:
+            message: The message to log.
+
+        WARNING is used for potential issues that don't prevent normal operation.
+        """
+        var record = Record(message, message, self.level, LOG_LEVELS.get('WARNING',0))
+        _ = Self.run_pipeline(record, self.filters, self.formatters, self.outputs)
+

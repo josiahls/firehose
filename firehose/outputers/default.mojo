@@ -2,7 +2,7 @@
 # Third Party Mojo Modules
 # First Party Modules
 from firehose.outputers.common import LoggerOutputer
-
+from firehose.common import Record
 
 @value
 struct DefaultLoggerOutputer(LoggerOutputer):
@@ -61,12 +61,12 @@ struct DefaultLoggerOutputer(LoggerOutputer):
         self.name = name
         self.level = level
 
-    fn output(mut self, message: String):
+    fn output(mut self, record: Record):
         """
         Output a log message to the console.
         
         Args:
-            message: The formatted message to output.
+            record: The formatted message to output.
 
         This method outputs the message to the console using the built-in
         print() function. The 'mut' designation is required by the trait,
@@ -75,4 +75,4 @@ struct DefaultLoggerOutputer(LoggerOutputer):
         Note that there's no return value - output operations are performed
         for their side effects.
         """
-        print(message)
+        print(record.message)

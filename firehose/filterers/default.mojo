@@ -2,7 +2,7 @@
 # Third Party Mojo Modules
 # First Party Modules
 from firehose.filterers.common import LoggerFilter
-
+from firehose.common import Record
 
 @value
 struct DefaultLoggerFilter(LoggerFilter):
@@ -68,13 +68,12 @@ struct DefaultLoggerFilter(LoggerFilter):
         self.name = name
         self.level = level
 
-    fn filter(self, level: Int, message: String) -> Bool:
+    fn filter(self, record: Record) -> Bool:
         """
         Filter messages based on their level.
         
         Args:
-            level: The numeric level of the message.
-            message: The content of the log message (unused in this filter).
+            record: The record to filter.
 
         Returns:
             Bool: True if the message should be logged, False if it should be dropped
@@ -85,4 +84,4 @@ struct DefaultLoggerFilter(LoggerFilter):
         Note that the message content is not used in filtering decisions for
         the default filter - only the level is considered.
         """
-        return level >= self.level
+        return record.message_level >= self.level

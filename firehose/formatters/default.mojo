@@ -2,7 +2,7 @@
 # Third Party Mojo Modules
 # First Party Modules
 from firehose.formatters.common import LoggerFormatter
-
+from firehose.common import Record
 
 @value
 struct DefaultLoggerFormatter(LoggerFormatter):
@@ -66,18 +66,18 @@ struct DefaultLoggerFormatter(LoggerFormatter):
         self.level = level
         self.format_string = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 
-    fn format(self, message: String) -> String:
+    fn format(self, record: Record) -> Record:
         """
         Format a log message (pass-through implementation).
         
         Args:
-            message: The log message to format.
+            record: The record to format.
 
         Returns:
-            String: The formatted message (unchanged in the default implementation)
+            Record: The formatted record (unchanged in the default implementation)
             
-        The DefaultLoggerFormatter simply returns the message unchanged.
+        The DefaultLoggerFormatter simply returns the record unchanged.
         Custom formatters would override this to add timestamps, log levels,
         source information, etc.
         """
-        return message
+        return record
