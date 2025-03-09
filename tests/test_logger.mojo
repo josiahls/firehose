@@ -8,7 +8,7 @@ TestLoggerOutputer to capture and verify log messages.
 # Native Mojo Modules
 # Third Party Mojo Modules
 # First Party Modules
-from firehose.logging import Logger
+from firehose.logging import Logger, set_global_logger_settings
 from firehose import (
     DefaultLoggerFilter, DefaultLoggerFormatter, DefaultLoggerOutputer
 )
@@ -16,15 +16,14 @@ from firehose import (
 
 fn test_visual_output() raises:
     """Just run the logs and print them to visually validate the format."""
-    var logger = Logger("test", "INFO")
+    set_global_logger_settings(level=10)
+    var logger = Logger.get_default_logger("test")
     # Test all of the format fields
-    logger.add_formatter_copy(
-        DefaultLoggerFormatter(
-            '%(file)s:%(line)s:%(column)s %(logger_name)s - %(message_level)s - %(message_level_name)s - %(message_level_name_short)s: %(original_message)s'
-        )
-    )
-    logger.add_outputter_copy(DefaultLoggerOutputer())
-    logger.add_filter_copy(DefaultLoggerFilter()) # Default is INFO level
+    # logger.add_formatter_copy(
+    #     DefaultLoggerFormatter(
+    #         '%(file)s:%(line)s:%(column)s %(logger_name)s - %(message_level)s - %(message_level_name)s - %(message_level_name_short)s: %(original_message)s'
+    #     )
+    # )
 
     logger.trace("Test trace message")
     logger.debug("Test debug message")

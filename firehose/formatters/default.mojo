@@ -1,5 +1,6 @@
 # Native Mojo Modules
 from memory import ArcPointer
+from pathlib import Path
 # Third Party Mojo Modules
 # First Party Modules
 from firehose.formatters.common import LoggerFormatter
@@ -32,10 +33,22 @@ struct DefaultLoggerFormatter(LoggerFormatter):
     """
     The format string to use for the log message.
     """
+
+    alias SUPPORTED_STRING_FIELDS:List[String] = List(
+        String("file"), 
+        String("file_name"),
+        String("line"),
+        String("column"), 
+        String("logger_name"), 
+        String("message_level"), 
+        String("message_level_name"),
+        String("message_level_name_short"), 
+        String("original_message")
+    )
     
     # TODO(josiahls): Mojo doesn't have time or datetime utilities, so we can't use the default format string.
     # fn __init__(out self, format_string: String='%(asctime)s - %(name)s - %(levelname)s - %(message)s'):
-    fn __init__(out self, format_string: String='%(logger_name)s - %(message_level_name_short)s: %(original_message)s'):
+    fn __init__(out self, format_string: String='%(file_name)s:%(line)s - %(message_level_name)s: %(original_message)s'):
         """
         Initialize a new DefaultLoggerFormatter.
         
@@ -48,6 +61,9 @@ struct DefaultLoggerFormatter(LoggerFormatter):
         ```
         """
         self.format_string = FormattableString(format_string)
+        for field_name in self.format_string.field_names:
+            if field_name[] not in Self.SUPPORTED_STRING_FIELDS:
+                print("Warning: Unsupported field name: " + field_name[])
 
     fn format(self, record: Record) -> Record:
         """
@@ -83,9 +99,14 @@ struct DefaultLoggerFormatter(LoggerFormatter):
                 record_field_value = String(record.source_location.col)
             elif field_name[] == "file":
                 record_field_value = String(record.source_location.file_name)
+            elif field_name[] == "file_name":
+                try:
+                    splits = record.source_location.file_name.split("/")
+                    record_field_value = String(splits[-1])
+                except:
+                    record_field_value = String("")
             elif field_name[] == "line":
                 record_field_value = String(record.source_location.line)
-                
 
             formatted_message = formatted_message.replace(
                 "%(" + field_name[] + ")s", 

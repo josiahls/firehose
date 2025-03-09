@@ -1,11 +1,47 @@
 # Native Mojo Modules
 from collections.dict import Dict
 from utils import Variant
-from memory import ArcPointer
+from memory import ArcPointer, UnsafePointer
 from builtin._location import __call_location
+from sys.ffi import _Global
 # Third Party Mojo Modules
 # First Party Modules
 from firehose import FormatterVariant, FilterVariant, OutputerVariant, LOG_LEVELS, LOG_LEVELS_NUMERIC, Record
+
+
+@value
+struct _GlobalLoggerSettings:
+    var default_logger_level: Int
+    var initialized: Bool
+
+    fn __init__(out self):
+        self.default_logger_level = LOG_LEVELS.get('INFO', 20)
+        self.initialized = True
+
+    fn set_initialized(mut self, initialized: Bool):
+        self.initialized = initialized
+
+
+fn _init_global_logger_settings() -> _GlobalLoggerSettings:
+    return _GlobalLoggerSettings()
+
+
+alias _LOGGER_SETTINGS_GLOBAL = _Global["LoggerSettings", _GlobalLoggerSettings, _init_global_logger_settings]
+
+
+@always_inline
+fn get_global_logger_settings() -> UnsafePointer[_GlobalLoggerSettings]:
+    return _LOGGER_SETTINGS_GLOBAL.get_or_create_ptr()
+
+
+fn disable_global_logger_settings():
+    get_global_logger_settings()[].set_initialized(False)
+
+
+fn set_global_logger_settings(level: Int):
+    var settings = get_global_logger_settings()
+    settings[].set_initialized(True)
+    settings[].default_logger_level = level
 
 
 @value
@@ -55,34 +91,30 @@ struct Logger:
     """
 
     @staticmethod
-    fn get_default_logger(name: String, level: String='INFO') -> Logger:
+    fn get_default_logger(name: String) -> Logger:
         """
         Create a logger with default configuration.
         
         Args:
-            name: Identifier for this logger
-            level: Log level name (default: 'INFO')
-            
+            name: Identifier for this logger.
+
         Returns:
             Logger: A configured logger with default components
             
         This creates a logger with the standard filter, formatter and outputter.
         """
-        try:
-            var logger = Logger(name, LOG_LEVELS[level])
-            # Create components with ArcPointers
-            var formatter = ArcPointer[FormatterVariant](DefaultLoggerFormatter(logger.name))
-            var filter = ArcPointer[FilterVariant](DefaultLoggerFilter(logger.name))
-            var output = ArcPointer[OutputerVariant](DefaultLoggerOutputer(logger.name, logger.level))
-            
-            logger.add_formatter(formatter^)
-            logger.add_filter(filter^)
-            logger.add_outputter(output^)
-            return logger^
-        except:
-            print('Failed to create default logger for ' + name)
-            return Logger(name, 0)
+        var level = get_global_logger_settings()[].default_logger_level
 
+        var logger = Logger(name, level)
+        # Create components with ArcPointers
+        var formatter = ArcPointer[FormatterVariant](DefaultLoggerFormatter())
+        var filter = ArcPointer[FilterVariant](DefaultLoggerFilter(level))
+        var output = ArcPointer[OutputerVariant](DefaultLoggerOutputer())
+        
+        logger.add_formatter(formatter^)
+        logger.add_filter(filter^)
+        logger.add_outputter(output^)
+        return logger^
 
     fn __init__(out self, name: String, level: Int=0):
         """

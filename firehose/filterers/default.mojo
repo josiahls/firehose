@@ -59,7 +59,10 @@ struct DefaultLoggerFilter(LoggerFilter):
         var filter = DefaultLoggerFilter("prod_filter", LOG_LEVELS['WARNING'])
         ```
         """
-        self.level = LOG_LEVELS.get(level, -1)
+        self.level = LOG_LEVELS.get(level, 0)
+
+    fn __init__(out self, level: Int):
+        self.level = level
 
     fn filter(self, record: Record) -> Bool:
         """
