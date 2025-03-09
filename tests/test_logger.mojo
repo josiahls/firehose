@@ -7,6 +7,7 @@ TestLoggerOutputer to capture and verify log messages.
 
 # Native Mojo Modules
 from collections.list import List
+from memory import ArcPointer
 # Third Party Mojo Modules
 # First Party Modules
 from firehose.logging import Logger
@@ -50,8 +51,8 @@ fn test_process_data() raises:
     """
     # Set up the logger with a test outputer
     var logger = Logger.get_default_logger("test", "DEBUG")
-    var test_outputer = TestLoggerOutputer("test_output", LOG_LEVELS['DEBUG'])
-    logger.add_output(test_outputer)
+    logger.add_output(TestLoggerOutputer("test_output", LOG_LEVELS['DEBUG']))
+    test_outputer = logger.outputs[-1]
     
     # Call the function with positive input
     var result = process_data(25, logger)
@@ -60,29 +61,29 @@ fn test_process_data() raises:
     debug_assert(result == 50)
     
     # Verify the log messages
-    var messages = test_outputer.get_messages()
+    var messages = test_outputer[][TestLoggerOutputer].get_messages()
     debug_assert(len(messages) != 0)
     # Check message contents (simplified to avoid string operations that might raise)
     print("First message: ", messages[0])
     print("Second message: ", messages[1])
     
-    # # Clear messages for the next test
-    # test_outputer.clear_messages()
+    # Clear messages for the next test
+    test_outputer[][TestLoggerOutputer].clear_messages()
     
-    # # Test with a value that triggers the warning
-    # result = process_data(-10, logger)
+    # Test with a value that triggers the warning
+    result = process_data(-10, logger)
     
-    # # Verify the result
-    # debug_assert(result == 0)
+    # Verify the result
+    debug_assert(result == 0)
     
-    # # Verify the log messages - should have a warning
-    # messages = test_outputer.get_messages()
-    # debug_assert(len(messages) == 3)
-    # print("First message: ", messages[0])
-    # print("Second message: ", messages[1])
-    # print("Third message: ", messages[2])
+    # Verify the log messages - should have a warning
+    messages = test_outputer[][TestLoggerOutputer].get_messages()
+    debug_assert(len(messages) == 3)
+    print("First message: ", messages[0])
+    print("Second message: ", messages[1])
+    print("Third message: ", messages[2])
     
-    # print("All tests passed!")
+    print("All tests passed!")
 
 
 # Main function to run the tests
