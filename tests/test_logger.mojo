@@ -19,11 +19,11 @@ fn test_visual_output() raises:
     set_global_logger_settings(level=10)
     var logger = Logger.get_default_logger("test")
     # Test all of the format fields
-    # logger.add_formatter_copy(
-    #     DefaultLoggerFormatter(
-    #         '%(file)s:%(line)s:%(column)s %(logger_name)s - %(message_level)s - %(message_level_name)s - %(message_level_name_short)s: %(original_message)s'
-    #     )
-    # )
+    logger.add_formatter_copy(
+        DefaultLoggerFormatter(
+            '%(file)s:%(file_name)s:%(line)s:%(column)s %(logger_name)s - %(message_level)s - %(message_level_name)s - %(message_level_name_short)s: %(original_message)s'
+        )
+    )
 
     logger.trace("Test trace message")
     logger.debug("Test debug message")
