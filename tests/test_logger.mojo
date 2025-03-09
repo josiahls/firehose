@@ -51,8 +51,8 @@ fn test_process_data() raises:
     """
     # Set up the logger with a test outputter
     var logger = Logger.get_default_logger("test", "DEBUG")
-    logger.add_output(TestLoggerOutputer("test_output", LOG_LEVELS['DEBUG']))
-    test_outputter = logger.outputs[-1]
+    logger.add_outputter(TestLoggerOutputer())
+    test_outputter = logger.outputters[-1]
     
     # Call the function with positive input
     var result = process_data(25, logger)

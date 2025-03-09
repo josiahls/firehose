@@ -20,7 +20,7 @@ struct TestLoggerOutputer(LoggerOutputer):
     # Set up a logger with a test outputter
     var logger = Logger.get_default_logger("test_logger")
     var test_outputter = TestLoggerOutputer("test", LOG_LEVELS['DEBUG'])
-    logger.add_output(test_outputter)
+    logger.add_outputter(test_outputter)
     
     # Your code that should log messages
     some_function_that_logs(logger)

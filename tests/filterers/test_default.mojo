@@ -118,9 +118,9 @@ fn test_logger_integration() raises:
     """Test that the filter works with a logger."""
     var logger = Logger("test", "DEBUG")
     logger.add_filter(DefaultLoggerFilter("DEBUG"))
-    logger.add_output(TestLoggerOutputer())
+    logger.add_outputter(TestLoggerOutputer())
 
-    var outputter = logger.outputs[0]
+    var outputter = logger.outputters[0]
 
     logger.info("This is an info message")
     logger.debug("This is a debug message")
@@ -133,7 +133,7 @@ fn test_logger_integration() raises:
     outputter[][TestLoggerOutputer].clear_messages()
 
     logger.level = LOG_LEVELS['INFO']
-    logger.filters[0][][DefaultLoggerFilter].level = LOG_LEVELS['INFO']
+    logger.filterers[0][][DefaultLoggerFilter].level = LOG_LEVELS['INFO']
 
     logger.info("This is an info message")
     logger.debug("This is a debug message")
@@ -149,7 +149,7 @@ fn test_logger_integration() raises:
     idx = 0
     for level in LOG_LEVELS:
         logger.level = LOG_LEVELS[level[]]
-        logger.filters[0][][DefaultLoggerFilter].level = LOG_LEVELS[level[]]
+        logger.filterers[0][][DefaultLoggerFilter].level = LOG_LEVELS[level[]]
         logger.trace("This is a trace message") 
         logger.debug("This is a debug message")
         logger.info("This is an info message")

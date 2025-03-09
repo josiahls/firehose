@@ -35,7 +35,7 @@ from firehose import LOG_LEVELS, TestLoggerOutputer
 # Create a logger and add a test outputter
 var logger = Logger.get_default_logger("test_logger")
 var test_outputter = TestLoggerOutputer("test_output", LOG_LEVELS['INFO'])
-logger.add_output(test_outputter)
+logger.add_outputter(test_outputter)
 
 # Log some messages
 logger.info("Test message 1")
@@ -170,7 +170,7 @@ To create a custom outputter:
 2. Create an instance of your outputter
 3. Use it with the Logger through OutputerVariant
 
-The OutputerVariant can be passed to Logger.add_output() to install the outputter.
+The OutputerVariant can be passed to Logger.add_outputter() to install the outputter.
 """
 
 
