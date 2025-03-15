@@ -76,6 +76,7 @@ from firehose.filterers.default import DefaultLoggerFilter
 from firehose.formatters.default import DefaultLoggerFormatter
 from firehose.outputters.default import DefaultLoggerOutputer
 from firehose.outputters.test import TestLoggerOutputer
+from firehose.outputters.file_logger import FileLoggerOutputer
 
 # Define the variants
 """
@@ -143,7 +144,7 @@ To create a custom formatter:
 The FormatterVariant can be passed to Logger.add_formatter() to install the formatter.
 """
 
-alias OutputerVariant = _OutputerVariant[DefaultLoggerOutputer, TestLoggerOutputer]
+alias OutputerVariant = _OutputerVariant[DefaultLoggerOutputer, TestLoggerOutputer, FileLoggerOutputer]
 """
 OutputerVariant: Runtime-polymorphic type for message outputters.
 
@@ -153,7 +154,7 @@ destination, such as the console, a file, or an in-memory collection.
 Default implementations:
 - DefaultLoggerOutputer: Outputs messages to the console with print()
 - TestLoggerOutputer: Stores messages in memory for testing
-
+- FileLoggerOutputer: Outputs messages to a file
 Example:
 ```
 # Regular console output
