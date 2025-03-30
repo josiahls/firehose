@@ -3,16 +3,18 @@
 # First Party Modules
 from builtin._location import __call_location, _SourceLocation
 
+
 @value
 struct Record:
     """
     Record: Represents a log message and its associated metadata.
-    
+
     A Record maintains both the original message and its potentially formatted version,
     along with level information for both the logger and the specific message.
     This allows the logging system to track how a message is transformed through
     the processing pipeline while preserving the original content.
     """
+
     var original_message: String
     """
     The unmodified message as it was originally passed to the logger.

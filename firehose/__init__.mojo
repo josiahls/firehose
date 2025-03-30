@@ -61,6 +61,7 @@ API Overview:
 from utils import Variant
 from collections.dict import Dict
 from collections.list import List
+
 # Third Party Mojo Modules
 # First Party Modules
 # Import the common types
@@ -144,7 +145,9 @@ To create a custom formatter:
 The FormatterVariant can be passed to Logger.add_formatter() to install the formatter.
 """
 
-alias OutputerVariant = _OutputerVariant[DefaultLoggerOutputer, TestLoggerOutputer, FileLoggerOutputer]
+alias OutputerVariant = _OutputerVariant[
+    DefaultLoggerOutputer, TestLoggerOutputer, FileLoggerOutputer
+]
 """
 OutputerVariant: Runtime-polymorphic type for message outputters.
 
@@ -179,10 +182,10 @@ The OutputerVariant can be passed to Logger.add_outputter() to install the outpu
 fn _init_log_levels() -> Dict[String, Int]:
     """
     Initialize the dictionary of log levels with standard severity values.
-    
+
     Returns:
         Dict[String, Int]: A dictionary mapping level names to numeric values
-    
+
     Log level hierarchy (from lowest to highest priority):
     - TRACE (0): Detailed tracing information, typically for inner loops
     - DEBUG (10): Debugging information useful during development
@@ -192,22 +195,32 @@ fn _init_log_levels() -> Dict[String, Int]:
     - CRITICAL (50): Critical failures that may cause program termination
     """
     d = Dict[String, Int]()
-    d['TRACE']    = 0   # Typically inner loop logging statements (e.g. "Loop iter 1000")
-    d['DEBUG']    = 10  # Noisy logging statements for debugging (e.g. "Item dump: 1,2,3...")
-    d['INFO']     = 20  # Regular runtime information (e.g. "Executing phase 1 of 3")
-    d['WARNING']  = 30  # Potential issues (e.g. "Skipping item 1000 due to missing data")
-    d['ERROR']    = 40  # Serious issues (e.g. "Failed to parse item 1000")
-    d['CRITICAL'] = 50  # Critical issues (e.g. "Program is unstable, shutting down")
+    d[
+        "TRACE"
+    ] = 0  # Typically inner loop logging statements (e.g. "Loop iter 1000")
+    d[
+        "DEBUG"
+    ] = 10  # Noisy logging statements for debugging (e.g. "Item dump: 1,2,3...")
+    d[
+        "INFO"
+    ] = 20  # Regular runtime information (e.g. "Executing phase 1 of 3")
+    d[
+        "WARNING"
+    ] = 30  # Potential issues (e.g. "Skipping item 1000 due to missing data")
+    d["ERROR"] = 40  # Serious issues (e.g. "Failed to parse item 1000")
+    d[
+        "CRITICAL"
+    ] = 50  # Critical issues (e.g. "Program is unstable, shutting down")
     return d
 
 
 fn _init_log_levels_numeric() -> List[Int]:
     """
     Initialize a list of all numeric log level values.
-    
+
     Returns:
         List[Int]: A list containing all numeric log level values
-    
+
     This is used for validation when setting log levels.
     """
     numeric_levels = List[Int]()
@@ -219,10 +232,10 @@ fn _init_log_levels_numeric() -> List[Int]:
 fn _init_log_levels_keys() -> List[String]:
     """
     Initialize a list of all log level names.
-    
+
     Returns:
         List[String]: A list containing all log level names
-    
+
     This is used for validation and display purposes.
     """
     keys = List[String]()
@@ -295,10 +308,10 @@ for level_name in LOG_LEVELS_KEYS:
 fn _init_log_levels_numeric_to_names() -> Dict[Int, String]:
     """
     Initialize a dictionary mapping numeric log levels to their names.
-    
+
     Returns:
         Dict[Int, String]: A dictionary mapping numeric log levels to their names
-    
+
     This provides a reverse mapping from numeric log levels to their corresponding
     names, useful for converting numeric levels to their textual representations.
     """

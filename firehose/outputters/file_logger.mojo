@@ -1,5 +1,6 @@
 # Native Mojo Modules
 from collections.list import List
+
 # Third Party Mojo Modules
 # First Party Modules
 from firehose.outputters.common import LoggerOutputer
@@ -10,10 +11,11 @@ from firehose.common import Record
 struct FileLoggerOutputer(LoggerOutputer):
     """
     FileLoggerOutputer: Logs messages to a file.
-    
+
     This outputter writes log messages to a specified file, appending them to the end of the file.
-    
+
     """
+
     var file_path: String
     var file_mode: String
     var file_handle: FileHandle
@@ -39,4 +41,3 @@ struct FileLoggerOutputer(LoggerOutputer):
     fn output(mut self, record: Record):
         self.file_handle.write(record.message)
         self.file_handle.write("\n")
-

@@ -10,7 +10,9 @@ TestLoggerOutputer to capture and verify log messages.
 # First Party Modules
 from firehose.logging import Logger, set_global_logger_settings
 from firehose import (
-    DefaultLoggerFilter, DefaultLoggerFormatter, DefaultLoggerOutputer
+    DefaultLoggerFilter,
+    DefaultLoggerFormatter,
+    DefaultLoggerOutputer,
 )
 
 
@@ -21,7 +23,9 @@ fn test_visual_output() raises:
     # Test all of the format fields
     logger.add_formatter_copy(
         DefaultLoggerFormatter(
-            '%(file)s:%(file_name)s:%(line)s:%(column)s %(logger_name)s - %(message_level)s - %(message_level_name)s - %(message_level_name_short)s: %(original_message)s'
+            "%(file)s:%(file_name)s:%(line)s:%(column)s %(logger_name)s -"
+            " %(message_level)s - %(message_level_name)s -"
+            " %(message_level_name_short)s: %(original_message)s"
         )
     )
 
@@ -33,9 +37,8 @@ fn test_visual_output() raises:
     logger.critical("Test critical message")
 
 
-
 # Main function to run the tests
 fn main() raises:
     print("Running Firehose logger tests...")
     test_visual_output()
-    print("All Firehose tests completed successfully.") 
+    print("All Firehose tests completed successfully.")

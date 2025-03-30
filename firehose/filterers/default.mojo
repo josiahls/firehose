@@ -4,34 +4,35 @@
 from firehose.filterers.common import LoggerFilter
 from firehose.common import Record
 
+
 @value
 struct DefaultLoggerFilter(LoggerFilter):
     """
     DefaultLoggerFilter: Standard log level-based filter.
-    
+
     This is the default filter implementation that passes or blocks log messages
     based on their numeric level. Messages with a level below the filter's
     configured level are dropped.
-    
+
     The filter applies a simple threshold rule:
     - If message level >= filter level: Message passes (returns True)
     - If message level < filter level: Message blocked (returns False)
-    
+
     Example:
     ```
     # Create a filter at WARNING level (30)
     var filter = DefaultLoggerFilter("app_filter", LOG_LEVELS['WARNING'])
-    
+
     # These will pass
     filter.filter(LOG_LEVELS['WARNING'], "Warning message")  # Level 30, passes
     filter.filter(LOG_LEVELS['ERROR'], "Error message")      # Level 40, passes
-    
+
     # These will be blocked
     filter.filter(LOG_LEVELS['DEBUG'], "Debug message")      # Level 10, blocked
     filter.filter(LOG_LEVELS['INFO'], "Info message")        # Level 20, blocked
     ```
     """
-    
+
     var level: Int
     """
     The threshold level for this filter. Messages with a level below this
@@ -46,10 +47,10 @@ struct DefaultLoggerFilter(LoggerFilter):
     - 50: CRITICAL
     """
 
-    fn __init__(out self, level: String='INFO'):
+    fn __init__(out self, level: String = "INFO"):
         """
         Initialize a new DefaultLoggerFilter.
-        
+
         Args:
             level: Threshold level - messages below this level will be filtered out.
 
@@ -67,7 +68,7 @@ struct DefaultLoggerFilter(LoggerFilter):
     fn filter(self, record: Record) -> Bool:
         """
         Filter messages based on their level.
-        
+
         Args:
             record: The record to filter.
 
@@ -76,7 +77,7 @@ struct DefaultLoggerFilter(LoggerFilter):
 
         Messages with a level less than the filter's level will be dropped.
         Messages with a level greater than or equal to the filter's level will pass.
-        
+
         Note that the message content is not used in filtering decisions for
         the default filter - only the level is considered.
         """
