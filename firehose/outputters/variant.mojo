@@ -126,7 +126,7 @@ struct Variant[*Ts: LoggerOutputer](
         __mlir_op.`lit.ownership.mark_initialized`(__get_mvalue_as_litref(self))
 
     @implicit
-    fn __init__[T: CollectionElement](mut self, owned value: T):
+    fn __init__[T: CollectionElement](out self, owned value: T):
         """Create a variant with one of the types.
 
         Parameters:
@@ -241,7 +241,7 @@ struct Variant[*Ts: LoggerOutputer](
         return UnsafePointer(discr_ptr).bitcast[UInt8]()[]
 
     @always_inline
-    fn take[T: CollectionElement](mut self) -> T:
+    fn take[T: CollectionElement](out self) -> T:
         """Take the current value of the variant with the provided type.
 
         The caller takes ownership of the underlying value.
@@ -262,7 +262,7 @@ struct Variant[*Ts: LoggerOutputer](
         return self.unsafe_take[T]()
 
     @always_inline
-    fn unsafe_take[T: CollectionElement](mut self) -> T:
+    fn unsafe_take[T: CollectionElement](out self) -> T:
         """Unsafely take the current value of the variant with the provided type.
 
         The caller takes ownership of the underlying value.
@@ -286,7 +286,7 @@ struct Variant[*Ts: LoggerOutputer](
     @always_inline
     fn replace[
         Tin: CollectionElement, Tout: CollectionElement
-    ](mut self, owned value: Tin) -> Tout:
+    ](out self, owned value: Tin) -> Tout:
         """Replace the current value of the variant with the provided type.
 
         The caller takes ownership of the underlying value.
@@ -313,7 +313,7 @@ struct Variant[*Ts: LoggerOutputer](
     @always_inline
     fn unsafe_replace[
         Tin: CollectionElement, Tout: CollectionElement
-    ](mut self, owned value: Tin) -> Tout:
+    ](out self, owned value: Tin) -> Tout:
         """Unsafely replace the current value of the variant with the provided type.
 
         The caller takes ownership of the underlying value.
@@ -339,7 +339,7 @@ struct Variant[*Ts: LoggerOutputer](
         self.set[Tin](value^)
         return x^
 
-    fn set[T: CollectionElement](mut self, owned value: T):
+    fn set[T: CollectionElement](out self, owned value: T):
         """Set the variant value.
 
         This will call the destructor on the old value, and update the variant's
