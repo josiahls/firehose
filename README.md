@@ -1,7 +1,5 @@
 # Firehose
 
-A familiar logging system for Mojo.
-
 ## Overview
 > Note: This library is experimental and is dependent on the continued improvement
 of the mojo langauge. Consider this alpha.
