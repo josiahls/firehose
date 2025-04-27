@@ -44,3 +44,8 @@ This will output messages with detailed context including:
 - Original message
 
 The format string can be customized to include any combination of these fields.
+
+### Caveats:
+- Custom filters, outputs, and formatters need to be directly added to the library itself in each module's init file at: `firehose/__init__.mojo`. Ideally we would just have a filter register function, or skip the need for variants altogether. 
+- Duplicates the `Variant` struct for each module type to get union-like behavior. Ideas to get around this are welcome.
+- Not optimized for performance. I currently update it as the need arises. 
