@@ -1,6 +1,6 @@
 # Native Mojo Modules
 from collections.list import List
-from builtin._location import __call_location
+from builtin._location import __call_location, _SourceLocation
 
 # Third Party Mojo Modules
 # First Party Modules

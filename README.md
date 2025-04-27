@@ -19,6 +19,8 @@ from firehose import (
 fn main() raises:
     """Just run the logs and print them to visually validate the format."""
     var logger = Logger("test", "INFO")
+    # Also change the logger level via environemntal variable:
+    # _ = os.setenv("FIREHOSE_LEVEL", "INFO", overwrite=True)
     # Test all of the format fields
     logger.add_formatter_copy(
         DefaultLoggerFormatter(
@@ -26,7 +28,7 @@ fn main() raises:
         )
     )
     logger.add_outputter_copy(DefaultLoggerOutputer())
-    logger.add_filter_copy(DefaultLoggerFilter()) # Default is INFO level
+    logger.add_filter_copy(DefaultLoggerFilter())
 
     logger.trace("Test trace message")
     logger.debug("Test debug message")
