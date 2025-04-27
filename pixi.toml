@@ -6,6 +6,23 @@ platforms = ["linux-64"]
 version = "0.1.0"
 
 [tasks]
+# Shell commands
+shell = "cd $HOME/firehose && magic shell"
+s = "magic run shell"
+p = "magic run package"
+bt = "magic run build_test"
+
+
+# firehose Development tools
+## Just format the firehose src directory, not the tests.
+format = "mojo format $HOME/firehose"
+f = "magic run format"
+
+## Common testing tasks
+test_all = "mojo test -I $HOME/firehose $HOME/firehose/tests"
+test_logger = "mojo run -I $HOME/firehose $HOME/firehose/tests/test_logger.mojo"
+test_filterers = "mojo run -I $HOME/firehose $HOME/firehose/tests/filterers/test_default.mojo"
+test_formatters = "mojo run -I $HOME/firehose $HOME/firehose/tests/formatters/test_default.mojo"
 
 [dependencies]
 max = ">=25.2.0.dev2025021805"

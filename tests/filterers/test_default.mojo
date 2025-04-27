@@ -1,5 +1,6 @@
 # Native Mojo Modules
 from collections.list import List
+from builtin._location import __call_location, _SourceLocation
 
 # Third Party Mojo Modules
 # First Party Modules
@@ -12,7 +13,7 @@ from firehose.logging import Logger
 
 fn test_filter_below_level() raises:
     """Test that messages below the filter level are rejected."""
-    var filter = DefaultLoggerFilter("INFO")
+    var filter = DefaultLoggerFilter()
 
     # Create a DEBUG level message (10) which is below INFO (20)
     var record = Record(
@@ -21,6 +22,7 @@ fn test_filter_below_level() raises:
         logger_level=LOG_LEVELS["INFO"],
         message_level=LOG_LEVELS["DEBUG"],
         logger_name="test",
+        source_location=__call_location[inline_count=1](),
     )
 
     # Should be filtered out since DEBUG < INFO
@@ -32,7 +34,7 @@ fn test_filter_below_level() raises:
 
 fn test_filter_at_level() raises:
     """Test that messages at the filter level are accepted."""
-    var filter = DefaultLoggerFilter("INFO")
+    var filter = DefaultLoggerFilter()
 
     # Create an INFO level message (20)
     var record = Record(
@@ -41,6 +43,7 @@ fn test_filter_at_level() raises:
         logger_level=LOG_LEVELS["INFO"],
         message_level=LOG_LEVELS["INFO"],
         logger_name="test",
+        source_location=__call_location[inline_count=1](),
     )
 
     # Should pass since INFO == INFO
@@ -49,7 +52,7 @@ fn test_filter_at_level() raises:
 
 fn test_filter_above_level() raises:
     """Test that messages above the filter level are accepted."""
-    var filter = DefaultLoggerFilter("INFO")
+    var filter = DefaultLoggerFilter()
 
     # Create an ERROR level message (40) which is above INFO (20)
     var record = Record(
@@ -58,6 +61,7 @@ fn test_filter_above_level() raises:
         logger_level=LOG_LEVELS["INFO"],
         message_level=LOG_LEVELS["ERROR"],
         logger_name="test",
+        source_location=__call_location[inline_count=1](),
     )
 
     # Should pass since ERROR > INFO
@@ -66,7 +70,7 @@ fn test_filter_above_level() raises:
 
 fn test_filter_trace_level() raises:
     """Test that TRACE level filter accepts all messages."""
-    var filter = DefaultLoggerFilter("TRACE")
+    var filter = DefaultLoggerFilter()
 
     # Test all levels
     var levels = List[String]()
@@ -85,6 +89,7 @@ fn test_filter_trace_level() raises:
             logger_level=LOG_LEVELS["TRACE"],
             message_level=LOG_LEVELS[level_name],
             logger_name="test",
+            source_location=__call_location[inline_count=1](),
         )
         debug_assert(
             filter.filter(record),
@@ -94,7 +99,7 @@ fn test_filter_trace_level() raises:
 
 fn test_filter_critical_level() raises:
     """Test that CRITICAL level filter only accepts CRITICAL messages."""
-    var filter = DefaultLoggerFilter("CRITICAL")
+    var filter = DefaultLoggerFilter()
 
     # Test all levels
     var levels = List[String]()
@@ -113,6 +118,7 @@ fn test_filter_critical_level() raises:
             logger_level=LOG_LEVELS["CRITICAL"],
             message_level=LOG_LEVELS[level_name],
             logger_name="test",
+            source_location=__call_location[inline_count=1](),
         )
 
         if level_name == "CRITICAL":
@@ -130,7 +136,7 @@ fn test_filter_critical_level() raises:
 fn test_logger_integration() raises:
     """Test that the filter works with a logger."""
     var logger = Logger("test", "DEBUG")
-    logger.add_filter(DefaultLoggerFilter("DEBUG"))
+    logger.add_filter(DefaultLoggerFilter())
     logger.add_outputter(TestLoggerOutputer())
 
     var outputter = logger.outputters[0]
@@ -146,7 +152,6 @@ fn test_logger_integration() raises:
     outputter[][TestLoggerOutputer].clear_messages()
 
     logger.level = LOG_LEVELS["INFO"]
-    logger.filterers[0][][DefaultLoggerFilter].level = LOG_LEVELS["INFO"]
 
     logger.info("This is an info message")
     logger.debug("This is a debug message")
@@ -169,7 +174,6 @@ fn test_logger_integration() raises:
     idx = 0
     for level in LOG_LEVELS:
         logger.level = LOG_LEVELS[level[]]
-        logger.filterers[0][][DefaultLoggerFilter].level = LOG_LEVELS[level[]]
         logger.trace("This is a trace message")
         logger.debug("This is a debug message")
         logger.info("This is an info message")

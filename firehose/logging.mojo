@@ -4,6 +4,7 @@ from utils import Variant
 from memory import ArcPointer, UnsafePointer
 from builtin._location import __call_location
 from sys.ffi import _Global
+import os
 
 # Third Party Mojo Modules
 # First Party Modules
@@ -76,6 +77,8 @@ struct Logger:
     ```
     """
 
+    alias FIREHOSE_LEVEL_ENV_VAR = "FIREHOSE_LEVEL"
+
     var name: String
     """
     Name of the logger instance, used for identification in log messages.
@@ -119,7 +122,7 @@ struct Logger:
         var logger = Logger(name, level)
         # Create components with ArcPointers
         var formatter = ArcPointer[FormatterVariant](DefaultLoggerFormatter())
-        var filter = ArcPointer[FilterVariant](DefaultLoggerFilter(level))
+        var filter = ArcPointer[FilterVariant](DefaultLoggerFilter())
         var output = ArcPointer[OutputerVariant](DefaultLoggerOutputer())
 
         logger.add_formatter(formatter^)
@@ -161,6 +164,12 @@ struct Logger:
         self.formatters = List[ArcPointer[FormatterVariant]]()
         self.filterers = List[ArcPointer[FilterVariant]]()
         self.outputters = List[ArcPointer[OutputerVariant]]()
+
+    fn get_level(self) -> Int:
+        env_level = os.getenv(self.FIREHOSE_LEVEL_ENV_VAR)
+        if env_level != "":
+            return LOG_LEVELS.get(env_level, -1)
+        return self.level
 
     fn add_formatter(mut self, owned formatter: FormatterVariant):
         """
@@ -343,7 +352,7 @@ struct Logger:
         var record = Record(
             message,
             message,
-            self.level,
+            self.get_level(),
             LOG_LEVELS.get("TRACE", 0),
             self.name,
             __call_location[inline_count=1](),
@@ -355,7 +364,7 @@ struct Logger:
         var record = Record(
             message,
             message,
-            self.level,
+            self.get_level(),
             LOG_LEVELS.get("DEBUG", 0),
             self.name,
             __call_location[inline_count=1](),
@@ -367,7 +376,7 @@ struct Logger:
         var record = Record(
             message,
             message,
-            self.level,
+            self.get_level(),
             LOG_LEVELS.get("INFO", 0),
             self.name,
             __call_location[inline_count=1](),
@@ -379,7 +388,7 @@ struct Logger:
         var record = Record(
             message,
             message,
-            self.level,
+            self.get_level(),
             LOG_LEVELS.get("WARNING", 0),
             self.name,
             __call_location[inline_count=1](),
@@ -391,7 +400,7 @@ struct Logger:
         var record = Record(
             message,
             message,
-            self.level,
+            self.get_level(),
             LOG_LEVELS.get("ERROR", 0),
             self.name,
             __call_location[inline_count=1](),
@@ -403,7 +412,7 @@ struct Logger:
         var record = Record(
             message,
             message,
-            self.level,
+            self.get_level(),
             LOG_LEVELS.get("CRITICAL", 0),
             self.name,
             __call_location[inline_count=1](),
