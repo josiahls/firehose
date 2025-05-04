@@ -80,23 +80,6 @@ from firehose.outputters.test import TestLoggerOutputer
 from firehose.outputters.file_logger import FileLoggerOutputer
 
 # Define the variants
-"""
-Type aliases for the variant types used in the logging system.
-
-These variants allow for runtime polymorphism with the different filter,
-formatter, and outputter implementations.
-
-Usage:
-```
-# Create a filter and add it to a logger
-var filter = DefaultLoggerFilter("my_filter", LOG_LEVELS['INFO'])
-var filter_variant = FilterVariant(filter)
-
-# Create and use the test outputter for capturing logs
-var test_output = TestLoggerOutputer("test", LOG_LEVELS['DEBUG'])
-var output_variant = OutputerVariant(test_output)
-```
-"""
 alias FilterVariant = _FilterVariant[DefaultLoggerFilter]
 """
 FilterVariant: Runtime-polymorphic type for message filters.
