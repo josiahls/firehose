@@ -226,7 +226,7 @@ struct Variant[*Ts: LoggerFormatter](
     fn _get_ptr[T: Copyable & Movable](self) -> UnsafePointer[T]:
         alias idx = Self._check[T]()
         constrained[idx != Self._sentinel, "not a union element type"]()
-        var ptr = UnsafePointer.address_of(self._impl).address
+        var ptr = UnsafePointer(to=self._impl).address
         var discr_ptr = __mlir_op.`pop.variant.bitcast`[
             _type = UnsafePointer[T]._mlir_type, index = idx.value
         ](ptr)
@@ -234,7 +234,7 @@ struct Variant[*Ts: LoggerFormatter](
 
     @always_inline("nodebug")
     fn _get_discr(ref self) -> ref [self] UInt8:
-        var ptr = UnsafePointer.address_of(self._impl).address
+        var ptr = UnsafePointer(to=self._impl).address
         var discr_ptr = __mlir_op.`pop.variant.discr_gep`[
             _type = __mlir_type.`!kgen.pointer<scalar<ui8>>`
         ](ptr)
