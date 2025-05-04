@@ -6,7 +6,7 @@ from memory import ArcPointer
 from firehose.common import Record
 
 
-trait LoggerFormatter(CollectionElement):
+trait LoggerFormatter(Copyable & Movable):
     """
     LoggerFormatter: Interface for formatting log messages.
 

@@ -4,7 +4,7 @@
 from firehose.common import Record
 
 
-trait LoggerOutputer(CollectionElement):
+trait LoggerOutputer(Copyable & Movable):
     """
     LoggerOutputer: Interface for outputting log messages.
 

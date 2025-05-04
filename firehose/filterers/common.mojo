@@ -4,7 +4,7 @@
 from firehose.common import Record
 
 
-trait LoggerFilter(CollectionElement):
+trait LoggerFilter(Copyable & Movable):
     """
     LoggerFilter: Interface for filtering log messages.
 

@@ -24,7 +24,7 @@ fn to_string(mut x: IntOrString) -> String:
   # x.isa[Int]()
   return String(x[Int])
 
-# They have to be mutable for now, and implement CollectionElement
+# They have to be mutable for now, and implement Copyable & Movable
 var an_int = IntOrString(4)
 var a_string = IntOrString(String("I'm a string!"))
 var who_knows = IntOrString(0)
@@ -64,8 +64,7 @@ from firehose.formatters.common import LoggerFormatter
 
 
 struct Variant[*Ts: LoggerFormatter](
-    CollectionElement,
-    ExplicitlyCopyable,
+    Copyable & Movable & ExplicitlyCopyable,
 ):
     """A runtime-variant type.
 
@@ -90,7 +89,7 @@ struct Variant[*Ts: LoggerFormatter](
         # x.isa[Int]()
         return String(x[Int])
 
-    # They have to be mutable for now, and implement CollectionElement
+    # They have to be mutable for now, and implement Copyable & Movable
     var an_int = IntOrString(4)
     var a_string = IntOrString(String("I'm a string!"))
     var who_knows = IntOrString(0)
@@ -127,7 +126,7 @@ struct Variant[*Ts: LoggerFormatter](
         __mlir_op.`lit.ownership.mark_initialized`(__get_mvalue_as_litref(self))
 
     @implicit
-    fn __init__[T: CollectionElement](out self, owned value: T):
+    fn __init__[T: Copyable & Movable](out self, owned value: T):
         """Create a variant with one of the types.
 
         Parameters:
@@ -198,7 +197,7 @@ struct Variant[*Ts: LoggerFormatter](
     # Operator dunders
     # ===-------------------------------------------------------------------===#
 
-    fn __getitem__[T: CollectionElement](ref self) -> ref [self] T:
+    fn __getitem__[T: Copyable & Movable](ref self) -> ref [self] T:
         """Get the value out of the variant as a type-checked type.
 
         This explicitly check that your value is of that type!
@@ -224,7 +223,7 @@ struct Variant[*Ts: LoggerFormatter](
     # ===-------------------------------------------------------------------===#
 
     @always_inline("nodebug")
-    fn _get_ptr[T: CollectionElement](self) -> UnsafePointer[T]:
+    fn _get_ptr[T: Copyable & Movable](self) -> UnsafePointer[T]:
         alias idx = Self._check[T]()
         constrained[idx != Self._sentinel, "not a union element type"]()
         var ptr = UnsafePointer.address_of(self._impl).address
@@ -242,7 +241,7 @@ struct Variant[*Ts: LoggerFormatter](
         return UnsafePointer(discr_ptr).bitcast[UInt8]()[]
 
     @always_inline
-    fn take[T: CollectionElement](out self) -> T:
+    fn take[T: Copyable & Movable](out self) -> T:
         """Take the current value of the variant with the provided type.
 
         The caller takes ownership of the underlying value.
@@ -263,7 +262,7 @@ struct Variant[*Ts: LoggerFormatter](
         return self.unsafe_take[T]()
 
     @always_inline
-    fn unsafe_take[T: CollectionElement](out self) -> T:
+    fn unsafe_take[T: Copyable & Movable](out self) -> T:
         """Unsafely take the current value of the variant with the provided type.
 
         The caller takes ownership of the underlying value.
@@ -286,7 +285,7 @@ struct Variant[*Ts: LoggerFormatter](
 
     @always_inline
     fn replace[
-        Tin: CollectionElement, Tout: CollectionElement
+        Tin: Copyable & Movable, Tout: Copyable & Movable
     ](out self, owned value: Tin) -> Tout:
         """Replace the current value of the variant with the provided type.
 
@@ -313,7 +312,7 @@ struct Variant[*Ts: LoggerFormatter](
 
     @always_inline
     fn unsafe_replace[
-        Tin: CollectionElement, Tout: CollectionElement
+        Tin: Copyable & Movable, Tout: Copyable & Movable
     ](out self, owned value: Tin) -> Tout:
         """Unsafely replace the current value of the variant with the provided type.
 
@@ -340,7 +339,7 @@ struct Variant[*Ts: LoggerFormatter](
         self.set[Tin](value^)
         return x^
 
-    fn set[T: CollectionElement](out self, owned value: T):
+    fn set[T: Copyable & Movable](out self, owned value: T):
         """Set the variant value.
 
         This will call the destructor on the old value, and update the variant's
@@ -354,7 +353,7 @@ struct Variant[*Ts: LoggerFormatter](
         """
         self = Self(value^)
 
-    fn isa[T: CollectionElement](self) -> Bool:
+    fn isa[T: Copyable & Movable](self) -> Bool:
         """Check if the variant contains the required type.
 
         Parameters:
@@ -366,7 +365,7 @@ struct Variant[*Ts: LoggerFormatter](
         alias idx = Self._check[T]()
         return self._get_discr() == idx
 
-    fn unsafe_get[T: CollectionElement](ref self) -> ref [self] T:
+    fn unsafe_get[T: Copyable & Movable](ref self) -> ref [self] T:
         """Get the value out of the variant as a type-checked type.
 
         This doesn't explicitly check that your value is of that type!
@@ -387,7 +386,7 @@ struct Variant[*Ts: LoggerFormatter](
         return self._get_ptr[T]()[]
 
     @staticmethod
-    fn _check[T: CollectionElement]() -> Int:
+    fn _check[T: Copyable & Movable]() -> Int:
         @parameter
         for i in range(len(VariadicList(Ts))):
             if _type_is_eq[Ts[i], T]():
