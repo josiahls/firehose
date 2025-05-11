@@ -87,7 +87,7 @@ struct DefaultLoggerFormatter(LoggerFormatter):
         var formatted_message = self.format_string.raw_format
 
         for field_name in self.format_string.field_names:
-            record_field_value = String("")
+            record_field_value = String()
 
             if field_name[] == "logger_name":
                 record_field_value = record.logger_name
@@ -116,7 +116,7 @@ struct DefaultLoggerFormatter(LoggerFormatter):
                     splits = record.source_location.file_name.split("/")
                     record_field_value = String(splits[-1])
                 except:
-                    record_field_value = String("")
+                    record_field_value = String()
             elif field_name[] == "line":
                 record_field_value = String(record.source_location.line)
 

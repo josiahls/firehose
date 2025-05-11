@@ -25,4 +25,5 @@ test_filterers = "mojo run -I $HOME/firehose $HOME/firehose/tests/filterers/test
 test_formatters = "mojo run -I $HOME/firehose $HOME/firehose/tests/formatters/test_default.mojo"
 
 [dependencies]
-max = ">=25.2.0.dev2025021805"
+# Earlier than 25.4.0.dev2025051105, StringSlice.replace() was segfaulting.
+max = ">=25.4.0.dev2025051105"
