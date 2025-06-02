@@ -18,8 +18,8 @@ from firehose import (
 )
 
 
-@value
-struct _GlobalLoggerSettings:
+@fieldwise_init
+struct _GlobalLoggerSettings(Copyable, Movable):
     var default_logger_level: Int
     var initialized: Bool
 
@@ -55,8 +55,8 @@ fn set_global_logger_settings(level: Int):
     settings[].default_logger_level = level
 
 
-@value
-struct Logger:
+@fieldwise_init
+struct Logger(Copyable, Movable):
     """
     Logger: The main entry point for the Firehose logging system.
 
