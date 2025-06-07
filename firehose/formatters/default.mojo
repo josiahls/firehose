@@ -67,8 +67,8 @@ struct DefaultLoggerFormatter(LoggerFormatter):
         """
         self.format_string = FormattableString(format_string)
         for field_name in self.format_string.field_names:
-            if field_name[] not in Self.SUPPORTED_STRING_FIELDS:
-                print("Warning: Unsupported field name: " + field_name[])
+            if field_name not in Self.SUPPORTED_STRING_FIELDS:
+                print("Warning: Unsupported field name: " + field_name)
 
     fn format(self, record: Record) -> Record:
         """
@@ -89,39 +89,39 @@ struct DefaultLoggerFormatter(LoggerFormatter):
         for field_name in self.format_string.field_names:
             record_field_value = String()
 
-            if field_name[] == "logger_name":
+            if field_name == "logger_name":
                 record_field_value = record.logger_name
-            elif field_name[] == "message_level":
+            elif field_name == "message_level":
                 record_field_value = String(record.message_level)
-            elif field_name[] == "message_level_name":
+            elif field_name == "message_level_name":
                 record_field_value = String(
                     LOG_LEVEL_NAMES_FROM_NUMERIC.get(
                         record.message_level, "UNKNOWN"
                     )
                 )
-            elif field_name[] == "message_level_name_short":
+            elif field_name == "message_level_name_short":
                 record_field_value = String(
                     LOG_LEVEL_NAMES_FROM_NUMERIC.get(
                         record.message_level, "UNKNOWN"
                     )[0]
                 )
-            elif field_name[] == "original_message":
+            elif field_name == "original_message":
                 record_field_value = record.original_message
-            elif field_name[] == "column":
+            elif field_name == "column":
                 record_field_value = String(record.source_location.col)
-            elif field_name[] == "file":
+            elif field_name == "file":
                 record_field_value = String(record.source_location.file_name)
-            elif field_name[] == "file_name":
+            elif field_name == "file_name":
                 try:
                     splits = record.source_location.file_name.split("/")
                     record_field_value = String(splits[-1])
                 except:
                     record_field_value = String()
-            elif field_name[] == "line":
+            elif field_name == "line":
                 record_field_value = String(record.source_location.line)
 
             formatted_message = formatted_message.replace(
-                "%(" + field_name[] + ")s", record_field_value
+                "%(" + field_name + ")s", record_field_value
             )
 
         return Record(

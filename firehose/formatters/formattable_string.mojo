@@ -36,9 +36,9 @@ struct FormattableString:
 
         try:
             for field_name in self.raw_format.split("%("):
-                if ")s" in field_name[]:
-                    for middle in field_name[].split(")s"):
-                        self.field_names.append(middle[])
+                if ")s" in field_name:
+                    for middle in field_name.split(")s"):
+                        self.field_names.append(middle)
                         break  # Only keep the first section
         except:
             if "%(" in self.raw_format:
