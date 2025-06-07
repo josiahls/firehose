@@ -112,11 +112,8 @@ struct DefaultLoggerFormatter(LoggerFormatter):
             elif field_name == "file":
                 record_field_value = String(record.source_location.file_name)
             elif field_name == "file_name":
-                try:
-                    splits = record.source_location.file_name.split("/")
-                    record_field_value = String(splits[-1])
-                except:
-                    record_field_value = String()
+                splits = record.source_location.file_name.split("/")
+                record_field_value = String(splits[-1])
             elif field_name == "line":
                 record_field_value = String(record.source_location.line)
 

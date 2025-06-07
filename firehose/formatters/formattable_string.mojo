@@ -34,12 +34,9 @@ struct FormattableString:
         self.raw_format = format_string
         self.field_names = List[String]()
 
-        try:
-            for field_name in self.raw_format.split("%("):
-                if ")s" in field_name:
-                    for middle in field_name.split(")s"):
-                        self.field_names.append(middle)
-                        break  # Only keep the first section
-        except:
-            if "%(" in self.raw_format:
-                print("Error parsing format string: " + self.raw_format)
+        for field_name in self.raw_format.split("%("):
+            if ")s" in field_name:
+                for middle in field_name.split(")s"):
+                    self.field_names.append(middle)
+                    break  # Only keep the first section
+
