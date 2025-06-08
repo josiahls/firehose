@@ -208,7 +208,7 @@ fn _init_log_levels_numeric() -> List[Int]:
     """
     numeric_levels = List[Int]()
     for level in _init_log_levels().values():
-        numeric_levels.append(level[])
+        numeric_levels.append(level)
     return numeric_levels
 
 
@@ -223,7 +223,7 @@ fn _init_log_levels_keys() -> List[String]:
     """
     keys = List[String]()
     for key in _init_log_levels().keys():
-        keys.append(key[])
+        keys.append(key)
     return keys
 
 
@@ -300,7 +300,7 @@ fn _init_log_levels_numeric_to_names() -> Dict[Int, String]:
     """
     d = Dict[Int, String]()
     for item in LOG_LEVELS.items():
-        d[item[].value] = item[].key
+        d[item.value] = item.key
     return d
 
 
