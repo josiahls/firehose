@@ -10,7 +10,7 @@ from firehose.formatters.formattable_string import FormattableString
 from firehose import LOG_LEVEL_NAMES_FROM_NUMERIC
 
 
-@value
+@fieldwise_init
 struct DefaultLoggerFormatter(LoggerFormatter):
     """
     DefaultLoggerFormatter: Standard pass-through message formatter.

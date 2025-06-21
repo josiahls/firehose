@@ -7,7 +7,7 @@ from firehose.outputters.common import LoggerOutputer
 from firehose.common import Record
 
 
-@value
+@fieldwise_init
 struct TestLoggerOutputer(LoggerOutputer):
     """
     TestLoggerOutputer: In-memory log message collector for testing.

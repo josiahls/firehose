@@ -5,7 +5,6 @@ from firehose.filterers.common import LoggerFilter
 from firehose.common import Record
 
 
-@value
 struct DefaultLoggerFilter(LoggerFilter):
     """
     DefaultLoggerFilter: Standard log level-based filter.

@@ -4,8 +4,8 @@
 from builtin._location import __call_location, _SourceLocation
 
 
-@value
-struct Record:
+@fieldwise_init
+struct Record(Copyable & Movable):
     """
     Record: Represents a log message and its associated metadata.
 

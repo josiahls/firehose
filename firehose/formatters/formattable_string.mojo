@@ -5,8 +5,8 @@ from collections.dict import Dict
 # First Party Modules
 
 
-@value
-struct FormattableString:
+@fieldwise_init
+struct FormattableString(Copyable & Movable):
     """
     FormattableString: A string that extracts metadata for a formatter to use
     when formatting a message.
