@@ -5,7 +5,7 @@ from firehose.outputters.common import LoggerOutputer
 from firehose.common import Record
 
 
-@value
+@fieldwise_init
 struct DefaultLoggerOutputer(LoggerOutputer):
     """
     DefaultLoggerOutputer: Standard console output implementation.

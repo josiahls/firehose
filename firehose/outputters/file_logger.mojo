@@ -7,7 +7,7 @@ from firehose.outputters.common import LoggerOutputer
 from firehose.common import Record
 
 
-@value
+@fieldwise_init
 struct FileLoggerOutputer(LoggerOutputer):
     """
     FileLoggerOutputer: Logs messages to a file.
