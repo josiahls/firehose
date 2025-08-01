@@ -25,4 +25,4 @@ test_filterers = "mojo run -I $HOME/firehose $HOME/firehose/tests/filterers/test
 test_formatters = "mojo run -I $HOME/firehose $HOME/firehose/tests/formatters/test_default.mojo"
 
 [dependencies]
-max = ">=25.5.0.dev2025062005,<25.5.0.dev2025070105"
+max = ">=25.5.0.dev2025073105"

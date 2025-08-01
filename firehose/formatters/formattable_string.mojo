@@ -37,6 +37,6 @@ struct FormattableString(Copyable & Movable):
         for field_name in self.raw_format.split("%("):
             if ")s" in field_name:
                 for middle in field_name.split(")s"):
-                    self.field_names.append(middle)
+                    self.field_names.append(String(middle))
                     break  # Only keep the first section
 
