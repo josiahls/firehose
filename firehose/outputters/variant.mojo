@@ -126,7 +126,7 @@ struct Variant[*Ts: LoggerOutputer](
         __mlir_op.`lit.ownership.mark_initialized`(__get_mvalue_as_litref(self))
 
     @implicit
-    fn __init__[T: Copyable & Movable](out self, owned value: T):
+    fn __init__[T: Copyable & Movable](out self, var value: T):
         """Create a variant with one of the types.
 
         Parameters:
@@ -167,7 +167,7 @@ struct Variant[*Ts: LoggerOutputer](
         # Delegate to explicit copy initializer.
         self = other.copy()
 
-    fn __moveinit__(out self, owned other: Self):
+    fn __moveinit__(out self, deinit other: Self):
         """Move initializer for the variant.
 
         Args:
@@ -184,7 +184,7 @@ struct Variant[*Ts: LoggerOutputer](
                 other._get_ptr[T]().move_pointee_into(self._get_ptr[T]())
                 return
 
-    fn __del__(owned self):
+    fn __del__(deinit  self):
         """Destroy the variant."""
 
         @parameter

@@ -171,7 +171,7 @@ struct Logger(Copyable, Movable):
             return LOG_LEVELS.get(env_level, -1)
         return self.level
 
-    fn add_formatter(mut self, owned formatter: FormatterVariant):
+    fn add_formatter(mut self, var formatter: FormatterVariant):
         """
         Add a formatter to the logger by taking ownership.
 
@@ -196,7 +196,7 @@ struct Logger(Copyable, Movable):
         """
         self.formatters.append(ArcPointer[FormatterVariant](formatter^))
 
-    fn add_formatter(mut self, owned formatter: ArcPointer[FormatterVariant]):
+    fn add_formatter(mut self, var formatter: ArcPointer[FormatterVariant]):
         """
         Add a formatter to the logger using an ArcPointer.
 
