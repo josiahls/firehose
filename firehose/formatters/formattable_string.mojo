@@ -39,4 +39,3 @@ struct FormattableString(Copyable & Movable):
                 for middle in field_name.split(")s"):
                     self.field_names.append(String(middle))
                     break  # Only keep the first section
-

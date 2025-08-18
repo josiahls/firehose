@@ -190,7 +190,7 @@ struct Logger(Copyable, Movable):
         )
         self.formatters.append(ArcPointer[FormatterVariant](formatter^))
 
-    fn add_formatter_copy(mut self, var  formatter: FormatterVariant):
+    fn add_formatter_copy(mut self, var formatter: FormatterVariant):
         """
         Add a formatter to the logger by taking ownership. This will make a copy of the formatter.
         """
@@ -227,7 +227,7 @@ struct Logger(Copyable, Movable):
         )
         self.filterers.append(ArcPointer[FilterVariant](filter^))
 
-    fn add_filter_copy(mut self, var  filter: FilterVariant):
+    fn add_filter_copy(mut self, var filter: FilterVariant):
         """
         Add a filter to the logger by taking ownership. This will make a copy of the filter.
         """
@@ -245,7 +245,7 @@ struct Logger(Copyable, Movable):
         """
         self.filterers.append(filter^)
 
-    fn add_outputter(mut self, var  output: OutputerVariant):
+    fn add_outputter(mut self, var output: OutputerVariant):
         """
         Add an outputter to the logger by taking ownership.
 
@@ -264,13 +264,13 @@ struct Logger(Copyable, Movable):
         )
         self.outputters.append(ArcPointer[OutputerVariant](output^))
 
-    fn add_outputter_copy(mut self, var  output: OutputerVariant):
+    fn add_outputter_copy(mut self, var output: OutputerVariant):
         """
         Add an outputter to the logger by taking ownership. This will make a copy of the outputter.
         """
         self.outputters.append(ArcPointer[OutputerVariant](output^))
 
-    fn add_outputter(mut self, var  output: ArcPointer[OutputerVariant]):
+    fn add_outputter(mut self, var output: ArcPointer[OutputerVariant]):
         """
         Add an outputter to the logger using an ArcPointer.
 

@@ -7,6 +7,7 @@ TestLoggerOutputer to capture and verify log messages.
 
 # Native Mojo Modules
 import os
+
 # Third Party Mojo Modules
 # First Party Modules
 from firehose.logging import Logger, set_global_logger_settings
@@ -47,6 +48,7 @@ fn test_env_var_level() raises:
     _ = os.setenv("FIREHOSE_LEVEL", "INFO", overwrite=True)
     logger.debug("Test debug message should not be printed")
     logger.info("Test info message")
+
 
 # Main function to run the tests
 fn main() raises:

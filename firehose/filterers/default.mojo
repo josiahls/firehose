@@ -24,8 +24,8 @@ struct DefaultLoggerFilter(LoggerFilter):
 
     # Create a record with INFO level message
     var info_record = Record(
-        ..., 
-        message_level=LOG_LEVELS["INFO"], 
+        ...,
+        message_level=LOG_LEVELS["INFO"],
         logger_level=LOG_LEVELS["INFO"],
         ...
     )
@@ -44,6 +44,7 @@ struct DefaultLoggerFilter(LoggerFilter):
     This filter is typically added to a Logger to control which messages
     are processed based on their severity level.
     """
+
     fn __init__(out self):
         pass
 

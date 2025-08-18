@@ -63,9 +63,7 @@ fn _align_up(value: Int, alignment: Int) -> Int:
 from firehose.outputters.common import LoggerOutputer
 
 
-struct Variant[*Ts: LoggerOutputer](
-    Copyable & Movable & ExplicitlyCopyable,
-):
+struct Variant[*Ts: LoggerOutputer](Copyable & Movable & ExplicitlyCopyable):
     """A runtime-variant type.
 
     Data for this type is stored internally. Currently, its size is the
@@ -184,7 +182,7 @@ struct Variant[*Ts: LoggerOutputer](
                 other._get_ptr[T]().move_pointee_into(self._get_ptr[T]())
                 return
 
-    fn __del__(deinit  self):
+    fn __del__(deinit self):
         """Destroy the variant."""
 
         @parameter
