@@ -226,7 +226,7 @@ struct Variant[*Ts: LoggerFormatter](Copyable & Movable & ExplicitlyCopyable):
         constrained[idx != Self._sentinel, "not a union element type"]()
         var ptr = UnsafePointer(to=self._impl).address
         var discr_ptr = __mlir_op.`pop.variant.bitcast`[
-            _type = UnsafePointer[T]._mlir_type, index = idx.value
+            _type = UnsafePointer[T]._mlir_type, index = idx._mlir_value
         ](ptr)
         return discr_ptr
 
