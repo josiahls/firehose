@@ -7,7 +7,7 @@ version = "0.1.0"
 
 [tasks]
 # Shell commands
-shell = "cd $HOME/firehose && magic shell"
+shell = "pixi shell"
 s = "pixi run shell"
 p = "pixi run package"
 bt = "pixi run build_test"
@@ -15,14 +15,14 @@ bt = "pixi run build_test"
 
 # firehose Development tools
 ## Just format the firehose src directory, not the tests.
-format = "mojo format $HOME/firehose"
+format = "mojo format ."
 f = "pixi run format"
 
 ## Common testing tasks
-test_all = "mojo test -I $HOME/firehose $HOME/firehose/tests"
-test_logger = "mojo run -I $HOME/firehose $HOME/firehose/tests/test_logger.mojo"
-test_filterers = "mojo run -I $HOME/firehose $HOME/firehose/tests/filterers/test_default.mojo"
-test_formatters = "mojo run -I $HOME/firehose $HOME/firehose/tests/formatters/test_default.mojo"
+test_all = "mojo test -I . tests"
+test_logger = "mojo run -I . tests/test_logger.mojo"
+test_filterers = "mojo run -I . tests/filterers/test_default.mojo"
+test_formatters = "mojo run -I . tests/formatters/test_default.mojo"
 
 [dependencies]
-max = ">=25.5.0.dev2025073105"
+mojo = ">=25.6.0.dev202508300"
