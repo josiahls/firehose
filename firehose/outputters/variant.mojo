@@ -63,7 +63,7 @@ fn _align_up(value: Int, alignment: Int) -> Int:
 from firehose.outputters.common import LoggerOutputer
 
 
-struct Variant[*Ts: LoggerOutputer](Copyable & Movable & ExplicitlyCopyable):
+struct Variant[*Ts: LoggerOutputer](Copyable & Movable ):
     """A runtime-variant type.
 
     Data for this type is stored internally. Currently, its size is the

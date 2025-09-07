@@ -63,7 +63,7 @@ fn _align_up(value: Int, alignment: Int) -> Int:
 from firehose.formatters.common import LoggerFormatter
 
 
-struct Variant[*Ts: LoggerFormatter](Copyable & Movable & ExplicitlyCopyable):
+struct Variant[*Ts: LoggerFormatter](Copyable & Movable ):
     """A runtime-variant type.
 
     Data for this type is stored internally. Currently, its size is the
