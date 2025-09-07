@@ -290,7 +290,7 @@ struct Logger(Copyable, Movable):
             alias T = FormatterVariant.Ts[i]
             if formatter_ptr[].isa[T]():
                 return formatter_ptr[][T].format(record)
-        return record
+        return record.copy()
 
     fn _apply_filter(
         self, filter_ptr: ArcPointer[FilterVariant], record: Record
@@ -311,26 +311,24 @@ struct Logger(Copyable, Movable):
             if output_ptr[].isa[T]():
                 output_ptr[][T].output(record)
 
-    fn run_pipeline(mut self, mut record: Record) -> Bool:
+    fn run_pipeline(mut self, var record: Record) -> Bool:
         """Run the pipeline of filters, formatters, and outputters."""
-        var current_record = record
 
         # Apply filters
         for i in range(len(self.filterers)):
             var filter = self.filterers[i]
-            if not self._apply_filter(filter, current_record):
+            if not self._apply_filter(filter, record):
                 return False
 
         # Apply formatters
         for i in range(len(self.formatters)):
             var formatter = self.formatters[i]
-            current_record = self._apply_formatter(formatter, current_record)
+            record = self._apply_formatter(formatter, record)
 
         # Apply outputs
-        var final_record = current_record
         for i in range(len(self.outputters)):
             var outputter = self.outputters[i]
-            self._apply_output(outputter, final_record)
+            self._apply_output(outputter, record)
 
         return True
 
@@ -369,7 +367,7 @@ struct Logger(Copyable, Movable):
             self.name,
             __call_location[inline_count=1](),
         )
-        _ = self.run_pipeline(record)
+        _ = self.run_pipeline(record^)
 
     @always_inline("nodebug")
     fn info(mut self, message: String):
@@ -381,7 +379,7 @@ struct Logger(Copyable, Movable):
             self.name,
             __call_location[inline_count=1](),
         )
-        _ = self.run_pipeline(record)
+        _ = self.run_pipeline(record^)
 
     @always_inline("nodebug")
     fn warning(mut self, message: String):
@@ -393,7 +391,7 @@ struct Logger(Copyable, Movable):
             self.name,
             __call_location[inline_count=1](),
         )
-        _ = self.run_pipeline(record)
+        _ = self.run_pipeline(record^)
 
     @always_inline("nodebug")
     fn error(mut self, message: String):
@@ -405,7 +403,7 @@ struct Logger(Copyable, Movable):
             self.name,
             __call_location[inline_count=1](),
         )
-        _ = self.run_pipeline(record)
+        _ = self.run_pipeline(record^)
 
     @always_inline("nodebug")
     fn critical(mut self, message: String):
@@ -417,4 +415,4 @@ struct Logger(Copyable, Movable):
             self.name,
             __call_location[inline_count=1](),
         )
-        _ = self.run_pipeline(record)
+        _ = self.run_pipeline(record^)
