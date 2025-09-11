@@ -194,7 +194,7 @@ fn _init_log_levels() -> Dict[String, Int]:
     d[
         "CRITICAL"
     ] = 50  # Critical issues (e.g. "Program is unstable, shutting down")
-    return d
+    return d^
 
 
 fn _init_log_levels_numeric() -> List[Int]:
@@ -209,7 +209,7 @@ fn _init_log_levels_numeric() -> List[Int]:
     numeric_levels = List[Int]()
     for level in _init_log_levels().values():
         numeric_levels.append(level)
-    return numeric_levels
+    return numeric_levels^
 
 
 fn _init_log_levels_keys() -> List[String]:
@@ -301,7 +301,7 @@ fn _init_log_levels_numeric_to_names() -> Dict[Int, String]:
     d = Dict[Int, String]()
     for item in LOG_LEVELS.items():
         d[item.value] = item.key
-    return d
+    return d^
 
 
 alias LOG_LEVEL_NAMES_FROM_NUMERIC = _init_log_levels_numeric_to_names()
