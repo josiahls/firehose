@@ -36,23 +36,29 @@ fn _init_global_logger_settings() -> _GlobalLoggerSettings:
 
 
 alias _LOGGER_SETTINGS_GLOBAL = _Global[
-    "LoggerSettings", _GlobalLoggerSettings, _init_global_logger_settings
+    "LoggerSettings", _init_global_logger_settings
 ]
 
 
 @always_inline
-fn get_global_logger_settings() -> UnsafePointer[_GlobalLoggerSettings]:
+fn get_global_logger_settings() raises -> UnsafePointer[_GlobalLoggerSettings]:
     return _LOGGER_SETTINGS_GLOBAL.get_or_create_ptr()
 
 
 fn disable_global_logger_settings():
-    get_global_logger_settings()[].set_initialized(False)
+    try:
+        get_global_logger_settings()[].set_initialized(False)
+    except e:
+        print("Error disabling global logger settings: ", e)
 
 
 fn set_global_logger_settings(level: Int):
-    var settings = get_global_logger_settings()
-    settings[].set_initialized(True)
-    settings[].default_logger_level = level
+    try:
+        var settings = get_global_logger_settings()
+        settings[].set_initialized(True)
+        settings[].default_logger_level = level
+    except e:
+        print("Error setting global logger settings: ", e)
 
 
 @fieldwise_init
@@ -117,7 +123,11 @@ struct Logger(Copyable, Movable):
 
         This creates a logger with the standard filter, formatter and outputter.
         """
-        var level = get_global_logger_settings()[].default_logger_level
+        var level = 20
+        try:
+            level = get_global_logger_settings()[].default_logger_level
+        except e:
+            print("Error getting global logger settings: ", e, ' Using default level INFO')
 
         var logger = Logger(name, level)
         # Create components with ArcPointers
