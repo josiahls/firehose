@@ -67,7 +67,7 @@ struct DefaultLoggerFormatter(LoggerFormatter):
         """
         self.format_string = FormattableString(format_string)
         for field_name in self.format_string.field_names:
-            if field_name not in Self.SUPPORTED_STRING_FIELDS:
+            if field_name not in materialize[Self.SUPPORTED_STRING_FIELDS]():
                 print("Warning: Unsupported field name: " + field_name)
 
     fn format(self, record: Record) -> Record:
@@ -95,13 +95,13 @@ struct DefaultLoggerFormatter(LoggerFormatter):
                 record_field_value = String(record.message_level)
             elif field_name == "message_level_name":
                 record_field_value = String(
-                    LOG_LEVEL_NAMES_FROM_NUMERIC.get(
+                    materialize[LOG_LEVEL_NAMES_FROM_NUMERIC]().get(
                         record.message_level, "UNKNOWN"
                     )
                 )
             elif field_name == "message_level_name_short":
                 record_field_value = String(
-                    LOG_LEVEL_NAMES_FROM_NUMERIC.get(
+                    materialize[LOG_LEVEL_NAMES_FROM_NUMERIC]().get(
                         record.message_level, "UNKNOWN"
                     )[0]
                 )

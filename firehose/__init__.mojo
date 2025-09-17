@@ -299,7 +299,7 @@ fn _init_log_levels_numeric_to_names() -> Dict[Int, String]:
     names, useful for converting numeric levels to their textual representations.
     """
     d = Dict[Int, String]()
-    for item in LOG_LEVELS.items():
+    for item in materialize[LOG_LEVELS]().items():
         d[item.value] = item.key
     return d^
 

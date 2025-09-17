@@ -24,7 +24,7 @@ struct _GlobalLoggerSettings(Copyable, Movable):
     var initialized: Bool
 
     fn __init__(out self):
-        self.default_logger_level = LOG_LEVELS.get("INFO", 20)
+        self.default_logger_level = materialize[LOG_LEVELS]().get("INFO", 20)
         self.initialized = True
 
     fn set_initialized(mut self, initialized: Bool):
@@ -154,7 +154,7 @@ struct Logger(Copyable, Movable):
         self.name = name
         self.level = level
         debug_assert(
-            self.level in LOG_LEVELS_NUMERIC,
+            self.level in materialize[LOG_LEVELS_NUMERIC]() ,
             "Invalid log level: " + String(self.level),
         )
         self.formatters = List[ArcPointer[FormatterVariant]]()
@@ -166,9 +166,9 @@ struct Logger(Copyable, Movable):
         Initialize a new Logger instance.
         """
         self.name = name
-        self.level = LOG_LEVELS.get(level, -1)  # Force a debug assert
+        self.level = materialize[LOG_LEVELS]().get(level, -1)  # Force a debug assert
         debug_assert(
-            self.level in LOG_LEVELS_NUMERIC,
+            self.level in materialize[LOG_LEVELS_NUMERIC](),
             "Invalid log level: " + String(self.level),
         )
         self.formatters = List[ArcPointer[FormatterVariant]]()
@@ -178,7 +178,7 @@ struct Logger(Copyable, Movable):
     fn get_level(self) -> Int:
         env_level = os.getenv(self.FIREHOSE_LEVEL_ENV_VAR)
         if env_level != "":
-            return LOG_LEVELS.get(env_level, -1)
+            return materialize[LOG_LEVELS]().get(env_level, -1)
         return self.level
 
     fn add_formatter(mut self, var formatter: FormatterVariant):
@@ -361,7 +361,7 @@ struct Logger(Copyable, Movable):
             message,
             message,
             self.get_level(),
-            LOG_LEVELS.get("TRACE", 0),
+            materialize[LOG_LEVELS]().get("TRACE", 0),
             self.name,
             __call_location[inline_count=1](),
         )
@@ -373,7 +373,7 @@ struct Logger(Copyable, Movable):
             message,
             message,
             self.get_level(),
-            LOG_LEVELS.get("DEBUG", 0),
+            materialize[LOG_LEVELS]().get("DEBUG", 0),
             self.name,
             __call_location[inline_count=1](),
         )
@@ -385,7 +385,7 @@ struct Logger(Copyable, Movable):
             message,
             message,
             self.get_level(),
-            LOG_LEVELS.get("INFO", 0),
+            materialize[LOG_LEVELS]().get("INFO", 0),
             self.name,
             __call_location[inline_count=1](),
         )
@@ -397,7 +397,7 @@ struct Logger(Copyable, Movable):
             message,
             message,
             self.get_level(),
-            LOG_LEVELS.get("WARNING", 0),
+            materialize[LOG_LEVELS]().get("WARNING", 0),
             self.name,
             __call_location[inline_count=1](),
         )
@@ -409,7 +409,7 @@ struct Logger(Copyable, Movable):
             message,
             message,
             self.get_level(),
-            LOG_LEVELS.get("ERROR", 0),
+            materialize[LOG_LEVELS]().get("ERROR", 0),
             self.name,
             __call_location[inline_count=1](),
         )
@@ -421,7 +421,7 @@ struct Logger(Copyable, Movable):
             message,
             message,
             self.get_level(),
-            LOG_LEVELS.get("CRITICAL", 0),
+            materialize[LOG_LEVELS]().get("CRITICAL", 0),
             self.name,
             __call_location[inline_count=1](),
         )
