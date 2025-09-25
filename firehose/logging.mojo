@@ -365,7 +365,7 @@ struct Logger(Copyable, Movable):
             self.name,
             __call_location[inline_count=1](),
         )
-        _ = self.run_pipeline(record)
+        _ = self.run_pipeline(record^)
 
     @always_inline("nodebug")
     fn debug(mut self, message: String):
