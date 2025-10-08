@@ -6,7 +6,7 @@ platforms = ["linux-64"]
 version = "0.1.0"
 
 [dependencies]
-mojo = ">=0.25.6.0.dev2025091705,<0.26.0.0"
+mojo = ">=0.25.7.0.dev2025100705,<0.26"
 
 [tasks]
 # Shell commands
